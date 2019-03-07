@@ -1,9 +1,11 @@
-import Page from '../components/page.js'
-import Link from '../components/link.js'
+import { React } from 'https://unpkg.com/es-react'
+
+import htm from 'https://unpkg.com/htm?module'
+const html = htm.bind(React.createElement)
 
 export default () => html`
-  <${Page}>
+  <div>
     <h1>You are lost!</h1>
-    <${Link} href='/'>Go Back Home<//>
-  <//>
+    <a href='/'>Go Back Home</a>
+  </div>
 `
