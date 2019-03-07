@@ -4,13 +4,13 @@ A create-react-app like template demonstrating how far you can get creating prog
 
 ## Getting Started
 
-To get started, first clone this repo then run the following command in your terminal (from the project root directory) to open the app in your preferred browser.
+To get started, first clone this repo then run the following command in your terminal (from the project root directory) which will open the app in your preferred browser.
 
 ```
-$ npx [servor](https://github.com/lukejacksonn/servor)
+$ npx servor
 ```
 
-> Live reload is enabled by default so when you make changes to your code the browser will reload the tab and your changes will be reflected there.
+> Live reload is enabled by default with [servor](https://github.com/lukejacksonn/servor) so when you make changes to your code the browser will reload the tab and your changes will be reflected there.
 
 ## Implementation
 
