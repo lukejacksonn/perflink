@@ -1,9 +1,9 @@
 import { React } from 'https://unpkg.com/es-react'
+import Logo from '../components/logo.js'
 
 import htm from 'https://unpkg.com/htm?module'
 const html = htm.bind(React.createElement)
 
-import Logo from '../components/logo/index.js'
 
 const style = `
   .App {
