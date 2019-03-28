@@ -1,3 +1,4 @@
+import { CopyIcon, CloseIcon } from './icons.js'
 import Editor from './editor.js'
 const { highlight, languages } = Prism
 
@@ -7,7 +8,7 @@ const insert = (arr, index, newItem) => [
   ...arr.slice(index),
 ]
 
-export default ({ tests, setTests, started, id, results, value }) => html`
+export default ({ tests, setTests, started, id, value }) => html`
   <li key=${id}>
     <div>
       <${Editor}
@@ -28,20 +29,33 @@ export default ({ tests, setTests, started, id, results, value }) => html`
           backgroundColor: '#212121',
           color: 'rgb(255, 255, 255)',
           borderRadius: '1rem',
+          lineHeight: '162%',
         }}
       />
       <div
         className=${css`
           position: absolute;
-          right: 0.62rem;
-          top: 0.62rem;
+          right: 1rem;
+          top: 1.3rem;
         `}
       >
-        <button onClick=${e => setTests(insert(tests, id, tests[id]))}>
-          <b>Copy</b>
+        <button
+          className=${css`
+            padding: 0;
+            border: 0;
+          `}
+          onClick=${e => setTests(insert(tests, id, tests[id]))}
+        >
+          <${CopyIcon} //>
         </button>
-        <button onClick=${e => setTests(tests.filter((x, y) => y !== id))}>
-          <b>X</b>
+        <button
+          className=${css`
+            padding: 0;
+            border: 0;
+          `}
+          onClick=${e => setTests(tests.filter((x, y) => y !== id))}
+        >
+          <${CloseIcon} //>
         </button>
       </div>
     </div>

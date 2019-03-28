@@ -8,42 +8,44 @@ const round = num => parseFloat(num).toFixed(3)
 
 export default () => {
   const [before, setBefore] = React.useState(
-    'const data = [...Array(10000).keys()]'
+    'const data = [...Array(12801).keys()]'
   )
   const [tests, setTests] = React.useState([
-    'data.find(x => x == 1)',
-    'data.find(x => x == 9999)',
+    'data.find(x => x == 400)',
+    'data.find(x => x == 800)',
+    'data.find(x => x == 1600)',
+    'data.find(x => x == 3200)',
+    'data.find(x => x == 6400)',
+    'data.find(x => x == 12800)',
   ])
-  const [started, setStarted] = React.useState(false)
+  const [started, setStarted] = React.useState(true)
   const [results, setResults] = React.useState([])
 
   React.useEffect(() => {
     if (started) {
       const results = []
-      const iterations = 1000
+      const iterations = 100
 
-      ;['', ...tests].forEach((test, i) => {
-        const code = eval(`(() => {
-          ${before};
-          ${test};
-        })`)
+      tests.forEach((test, i) => {
         const times = []
-
-        let start, end
         let done = iterations
         while (done > 0) {
-          start = performance.now()
-          code()
-          end = performance.now()
-          times.push(end - start)
+          times.push(
+            eval(`() => {
+              ${before}
+              let start, end
+              start = performance.now()
+              ${test}
+              end = performance.now()
+              return end - start
+            }`)()
+          )
           done--
         }
-
-        i !== 0 &&
-          results.push({
-            total: total(times),
-            median: median(times),
-          })
+        results.push({
+          total: total(times),
+          median: median(times),
+        })
       })
 
       const max = Math.max(...results.map(x => x.median))
@@ -51,8 +53,6 @@ export default () => {
         ...result,
         percent: (result.median / max) * 100,
       }))
-
-      console.log(out)
 
       setResults(out)
       setStarted(false)
@@ -74,14 +74,15 @@ export default () => {
           display: flex;
           flex-direction: column;
           color: #fff;
+          overflow-x: auto;
         `}
       >
         <div
           className=${css`
+            margin: 0 auto;
             flex: 1 1 100%;
-            padding: 2rem;
+            padding: 4rem 3rem;
             display: flex;
-            justify-content: center;
             align-items: flex-end;
           `}
         >
@@ -115,10 +116,12 @@ export default () => {
                 </div>
                 <p
                   className=${css`
+                    width: 3rem;
                     margin-top: 2rem;
+                    text-align: center;
                   `}
                 >
-                  ${results[i] ? round(results[i].median) : `RUN ${i + 1}`}
+                  ${results[i] ? `${round(results[i].median)}` : i + 1}
                 </p>
               </div>
             `
