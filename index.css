@@ -26,7 +26,7 @@ button {
   border: 0;
   margin: 0;
   border: 1px solid rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.6);
   padding: 0.62rem;
   border-radius: 1rem;
   background: transparent;
@@ -36,6 +36,6 @@ button {
 }
 
 button:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
 }

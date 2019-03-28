@@ -8,12 +8,10 @@ const round = num => parseFloat(num).toFixed(3)
 
 export default () => {
   const [before, setBefore] = React.useState(
-    'const data = [...Array(12801).keys()]'
+    'const data = [...Array(12800).keys()]'
   )
   const [tests, setTests] = React.useState([
-    'data.find(x => x == 400)',
-    'data.find(x => x == 800)',
-    'data.find(x => x == 1600)',
+    '',
     'data.find(x => x == 3200)',
     'data.find(x => x == 6400)',
     'data.find(x => x == 12800)',
@@ -61,6 +59,7 @@ export default () => {
 
   return html`
     <main className=${styles}>
+      <header></header>
       <${Tests}
         before=${before}
         setBefore=${setBefore}

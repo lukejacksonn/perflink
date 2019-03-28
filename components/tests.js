@@ -35,7 +35,7 @@ export default ({
             setTests([])
           }}
         >
-          Reset
+          Clear All
         </button>
       </div>
     </div>
@@ -76,9 +76,10 @@ export default ({
           `}
           onClick=${e => setTests(['', ...tests])}
         >
-          Create
+          Add Case
         </button>
         <button
+          disabled=${started}
           className=${css`
             border: 2px solid blue;
           `}

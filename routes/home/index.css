@@ -2,7 +2,7 @@
   width: 100%;
   margin: 0 auto;
   display: flex;
-  flex-direction: row;
+  flex-flow: row;
 }
 
 article {
@@ -67,4 +67,9 @@ h3 {
 
 svg {
   fill: rgba(255, 255, 255, 0.3);
+}
+
+header {
+  width: 6rem;
+  background: #1b1b1b;
 }
