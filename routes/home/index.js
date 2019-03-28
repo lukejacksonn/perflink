@@ -71,6 +71,7 @@ export default () => {
       />
       <aside
         className=${css`
+          position: relative;
           display: flex;
           flex-direction: column;
           color: #fff;
@@ -81,7 +82,7 @@ export default () => {
           className=${css`
             margin: 0 auto;
             flex: 1 1 100%;
-            padding: 4rem 3rem;
+            padding: 4rem 4rem 2rem;
             display: flex;
             align-items: flex-end;
           `}
@@ -110,7 +111,10 @@ export default () => {
                     style=${{
                       width: '1px',
                       height: `${results[i] ? results[i].percent : 100}%`,
-                      background: results[i] ? 'rgba(255,255,255,0.8)' : '#000',
+                      background: results[i]
+                        ? 'rgba(255,255,255,0.5)'
+                        : 'rgba(0,0,0,0.5)',
+                      transition: 'height 0.5s',
                     }}
                   ></span>
                 </div>
@@ -126,6 +130,22 @@ export default () => {
               </div>
             `
           )}
+        </div>
+        <div
+          className=${css`
+            position: sticky;
+            left: 3rem;
+            width: calc(100% - 6rem);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            font-weight: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 0 3rem;
+            margin: 0 3rem;
+          `}
+        >
+          Median Execution Time (Milliseconds)
         </div>
       </aside>
     </main>

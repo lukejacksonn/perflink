@@ -84,7 +84,7 @@ export default ({
           `}
           onClick=${e => setStarted(!started)}
         >
-          Run All
+          Benchmark
         </button>
       </div>
     </div>
