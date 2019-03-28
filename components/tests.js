@@ -47,80 +47,96 @@ const style = {
   `,
 }
 
-export default ({
-  before,
-  setBefore,
-  tests,
-  setTests,
-  started,
-  setStarted,
-}) => html`
-  <article>
-    <div className=${style.header}>
-      <h3>Environment Setup</h3>
-      <div>
-        <button
-          className=${style.clear}
-          onClick=${e => {
-            setStarted(false)
-            setBefore('')
-            setTests([])
-          }}
-        >
-          Clear All
-        </button>
+function debounce(func, wait, immediate) {
+  var timeout
+  return function() {
+    var context = this,
+      args = arguments
+    var later = function() {
+      timeout = null
+      if (!immediate) func.apply(context, args)
+    }
+    var callNow = immediate && !timeout
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+    if (callNow) func.apply(context, args)
+  }
+}
+
+let debouncedSetStart
+export default ({ before, setBefore, tests, setTests, setStarted }) => {
+  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
+  return html`
+    <article>
+      <div className=${style.header}>
+        <h3>Environment Setup</h3>
+        <div>
+          <button
+            className=${style.clear}
+            onClick=${e => {
+              setStarted(false)
+              setBefore('')
+              setTests([])
+            }}
+          >
+            Clear All
+          </button>
+        </div>
       </div>
-    </div>
-    <${Editor}
-      value=${before}
-      onValueChange=${setBefore}
-      highlight=${code => highlight(code, languages.js)}
-      padding=${20}
-      style=${style.editor}
-    />
-    <div className=${style.header}>
-      <h3>Test Cases</h3>
-      <div>
-        <button
-          className=${style.add}
-          onClick=${e => setTests([{ code: '' }, ...tests])}
-        >
-          Add Case
-        </button>
+      <${Editor}
+        value=${before}
+        onValueChange=${code => {
+          setBefore(code)
+          debouncedSetStart(true)
+        }}
+        highlight=${code => highlight(code, languages.js)}
+        padding=${20}
+        style=${style.editor}
+      />
+      <div className=${style.header}>
+        <h3>Test Cases</h3>
+        <div>
+          <button
+            className=${style.add}
+            onClick=${e => setTests([{ code: '' }, ...tests])}
+          >
+            Add Case
+          </button>
+        </div>
       </div>
-    </div>
-    <ul>
-      ${tests.map(
-        (test, id) => html`
-          <li key=${id}>
-            <${Editor}
-              key=${id}
-              value=${test.code}
-              onValueChange=${code => {
-                setTests(tests.map((t, i) => (i == id ? { ...t, code } : t)))
-                setStarted(true)
-              }}
-              highlight=${code => highlight(code, languages.js)}
-              padding=${20}
-              style=${style.editor}
-            />
-            <div className=${style.controls}>
-              <button
-                className=${style.button}
-                onClick=${e => setTests(insert(tests, id, tests[id]))}
-              >
-                <${CopyIcon} //>
-              </button>
-              <button
-                className=${style.button}
-                onClick=${e => setTests(tests.filter((_, y) => y !== id))}
-              >
-                <${CloseIcon} //>
-              </button>
-            </div>
-          </li>
-        `
-      )}
-    </ul>
-  </article>
-`
+      <ul>
+        ${tests.map(
+          (test, id) => html`
+            <li key=${id}>
+              <${Editor}
+                key=${id}
+                value=${test.code}
+                onValueChange=${code => {
+                  setTests(tests.map((t, i) => (i == id ? { ...t, code } : t)))
+                  debouncedSetStart(true)
+                }}
+                highlight=${code => highlight(code, languages.js)}
+                padding=${20}
+                style=${style.editor}
+              />
+              <div className=${style.controls}>
+                <button
+                  className=${style.button}
+                  onClick=${e => setTests(insert(tests, id, tests[id]))}
+                >
+                  <${CopyIcon} //>
+                </button>
+                <button
+                  className=${style.button}
+                  onClick=${e => setTests(tests.filter((_, y) => y !== id))}
+                >
+                  <${CloseIcon} //>
+                </button>
+              </div>
+            </li>
+          `
+        )}
+      </ul>
+    </article>
+  `
+}
