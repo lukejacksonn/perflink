@@ -4,12 +4,12 @@ import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
-const init = location.search
+const init = location.hash
   ? {
       started: true,
       dialog: false,
-      before: atob(location.search.slice(1).split('/')[0]),
-      tests: JSON.parse(atob(location.search.slice(1).split('/')[1])),
+      before: atob(location.hash.slice(1).split('/')[0]),
+      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
     }
   : {
       started: false,
@@ -67,7 +67,7 @@ export default () => {
       history.pushState(
         null,
         null,
-        `?${btoa(before)}/${btoa(JSON.stringify(tests))}`
+        `#${btoa(before)}/${btoa(JSON.stringify(tests))}`
       )
 
       setTests(out)
