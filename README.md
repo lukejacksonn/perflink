@@ -2,7 +2,7 @@
 
 > JavaScript performance benchmarks that you can share via URL
 
-The motivation here was to create a single page app alternative to (jsperf)[https://jsperf.com] – which is commonly used to compare performance characteristics of different Javascript code implementations – but with improved portibility and usability as a priority.
+The motivation here was to create a single page app alternative to [jsperf](https://jsperf.com) – which is commonly used to compare performance characteristics of different Javascript code implementations – but with improved portibility and usability as a priority.
 
 ![perflink](https://user-images.githubusercontent.com/1457604/55242563-6c959f00-5235-11e9-8cb5-f1f140781f3b.gif)
 
