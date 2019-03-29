@@ -34,9 +34,10 @@ button {
   font-size: 1rem;
   line-height: 1;
   outline: none;
+  opacity: 0.9;
 }
 
 button:hover {
-  color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
   cursor: pointer;
 }

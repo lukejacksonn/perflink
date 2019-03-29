@@ -11,7 +11,7 @@ const style = {
   graph: css`
     margin: 0 auto;
     flex: 1 1 100%;
-    padding: 4rem 4rem 2rem;
+    padding: 3rem 3rem 2rem;
     display: flex;
     align-items: flex-end;
   `,
@@ -39,10 +39,10 @@ const style = {
     left: 3rem;
     width: calc(100% - 6rem);
     text-align: center;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
     font-weight: bold;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 0 3rem;
+    padding: 2rem 0 3rem;
     margin: 0 3rem;
   `,
 }
@@ -71,7 +71,7 @@ export default ({ tests }) => html`
       )}
     </div>
     <div className=${style.legend}>
-      Median Execution Time (Milliseconds)
+      Median Execution Time (ms)
     </div>
   </aside>
 `

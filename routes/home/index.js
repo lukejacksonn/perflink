@@ -3,29 +3,25 @@ const styles = css`/routes/home/index.css`
 import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
-import { RunIcon } from '../../components/icons.js'
-
-const total = xs => xs.reduce((p, c) => p + c, 0)
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
 
 export default () => {
   const [before, setBefore] = React.useState(
-    'const data = [...Array(12800).keys()]'
+    `const data = [...Array(12800).keys()]\nconst item = Math.random() * 12800 << 0`
   )
+  const [started, setStarted] = React.useState(true)
   const [tests, setTests] = React.useState([
     { code: '' },
+    { code: 'data.find(x => x == item)' },
     { code: 'data.find(x => x == 3200)' },
     { code: 'data.find(x => x == 6400)' },
     { code: 'data.find(x => x == 12800)' },
   ])
-  const [started, setStarted] = React.useState(true)
-  const [results, setResults] = React.useState([])
 
   React.useEffect(() => {
     if (started) {
       const results = []
       const iterations = 100
-
       tests.forEach(test => {
         const times = []
         let done = iterations
@@ -50,13 +46,11 @@ export default () => {
       })
 
       const max = Math.max(...results)
-      const out = tests.map((result, i) => ({
-        ...tests[i],
+      const out = tests.map((test, i) => ({
+        ...test,
         median: results[i],
         percent: (results[i] / max) * 100,
       }))
-
-      console.log(out)
 
       setTests(out)
       setStarted(false)
@@ -73,7 +67,7 @@ export default () => {
         started=${started}
         setStarted=${setStarted}
       />
-      <${Results} tests=${tests} results=${results} />
+      <${Results} tests=${tests} />
     </main>
   `
 }

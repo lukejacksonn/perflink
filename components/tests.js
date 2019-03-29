@@ -11,19 +11,17 @@ const insert = (arr, index, newItem) => [
 const style = {
   editor: {
     width: '100%',
-    fontFamily: 'monospace',
-    color: '#fff',
     fontSize: 16,
     backgroundColor: '#212121',
     color: 'rgb(255, 255, 255)',
     borderRadius: '1rem',
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New'",
-    lineHeight: '150%',
+    lineHeight: '170%',
   },
   header: css`
     display: flex;
     align-items: center;
-    padding: 0 1rem 1.38rem;
+    padding: 0 1rem 1.62rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     justify-content: space-between;
   `,
@@ -31,15 +29,17 @@ const style = {
     border: 1px solid red;
   `,
   add: css`
-    border: 1px solid green;
+    color: orange;
+    border: 1px solid orange;
   `,
   start: css`
-    border: 1px solid blue;
+    color: lightblue;
+    border: 1px solid lightblue;
   `,
   controls: css`
     position: absolute;
     right: 1rem;
-    top: 1.3rem;
+    top: 1.4rem;
   `,
   button: css`
     padding: 0;
@@ -65,21 +65,14 @@ function debounce(func, wait, immediate) {
 
 let debouncedSetStart
 export default ({ before, setBefore, tests, setTests, setStarted }) => {
-  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
+  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 200))
   return html`
     <article>
       <div className=${style.header}>
         <h3>Environment Setup</h3>
         <div>
-          <button
-            className=${style.clear}
-            onClick=${e => {
-              setStarted(false)
-              setBefore('')
-              setTests([])
-            }}
-          >
-            Clear All
+          <button className=${style.start} onClick=${e => setStarted(true)}>
+            Run Benchmark
           </button>
         </div>
       </div>
