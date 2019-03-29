@@ -8,7 +8,7 @@
 article {
   width: 62%;
   padding: 3rem;
-  background: #242424;
+  background: #2f3138;
   color: rgba(255, 255, 255, 0.62);
   max-height: 100vh;
   overflow-y: auto;
@@ -16,7 +16,7 @@ article {
 
 aside {
   width: 38%;
-  background: #202020;
+  background: #2c2d33;
 }
 
 p {

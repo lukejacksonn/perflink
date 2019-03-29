@@ -59,7 +59,7 @@ export default ({ tests }) => html`
                   width: '1px',
                   transition: 'height 0.5s',
                   height: `${test.percent ? test.percent : 0}%`,
-                  background: 'rgba(255,255,255,0.5)',
+                  background: 'rgba(255,255,255,0.8)',
                 }}
               ></span>
             </div>

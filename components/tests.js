@@ -12,7 +12,7 @@ const style = {
   editor: {
     width: '100%',
     fontSize: 16,
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#2a2b2f',
     color: 'rgb(255, 255, 255)',
     borderRadius: '1rem',
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New'",
