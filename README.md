@@ -16,7 +16,7 @@ The motivation here was to create a single page app alternative to (jsperf)[http
 
 ## Usage
 
-To use the web interface simply visit [https://perf.link] and start typing. As you type the code will be evaluated and benchmarked – against all other test cases – the results of which will appear on graph to the right.
+To use the web interface simply visit https://perf.link and start typing. As you type the code will be evaluated and benchmarked – against all other test cases – the results of which will appear on graph to the right.
 
 The contents of all inputs and latest benchmark results for each test case, are stored in state which is serialised using the browsers `atob` function and set as the `location.hash`. This happens every time a benchmark is ran. That means you can share your findings with anyone by just copy pasting the window URL.
 
