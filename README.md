@@ -2,11 +2,27 @@
 
 > JavaScript performance benchmarks that you can share via URL
 
-The motivation here was to create a single page app alternative to (jsperf)[https://jsperf.com] which is commonly used to compare performance characteristics of different Javascript implementations against each other.
+The motivation here was to create a single page app alternative to (jsperf)[https://jsperf.com] – which is commonly used to compare performance characteristics of different Javascript code implementations – but with improved portibility and usability as a priority.
 
-## Getting Started
+![perflink](https://user-images.githubusercontent.com/1457604/55242563-6c959f00-5235-11e9-8cb5-f1f140781f3b.gif)
 
-To get started, first clone this repo then run the following command in your terminal (from the project root directory) which will open the app in your preferred browser.
+## Features
+
+- 🎨 Syntax highlighted textarea inputs
+- ♻️ Benchmarks run automatically when test cases change
+- 🌍 Serializable state encoded into shareable URLs
+- ⏱ Accurate timing using `performance.now()`
+- 🗜 Super light weight – almost no dependenciess
+
+## Usage
+
+To use the web interface simply visit [https://perf.link] and start typing. As you type the code will be evaluated and benchmarked – against all other test cases – the results of which will appear on graph to the right.
+
+The contents of all inputs and latest benchmark results for each test case, are stored in state which is serialised using the browsers `atob` function and set as the `location.hash`. This happens every time a benchmark is ran. Thant means you can share your findings with anyone by just copy pasting the windows URL.
+
+## Development
+
+If you would like to develop the project, first clone this repo then run the following command in your terminal (from the project root directory) which will open the app in your preferred browser.
 
 ```
 $ npx servor
@@ -16,46 +32,44 @@ $ npx servor
 
 ## Implementation
 
-This project uses a proprietary version of react called [`es-react`](https://github.com/lukejacksonn/es-react) which allows you to import `React` and `ReactDOM` (version 16.8.3) as an es module from within your app and component files.
+Benchmarking involves accurate timing. Historically this has been hard to do due to the limitations of timers in JavaScript. Recently a high resolution timer was added by the WebPerf Working Group to allow measurement in the Web Platform with much greater degree of accuracy. Here is how time of execution is calculated:
 
 ```js
-import { React, ReactDOM } from 'https://unpkg.com/es-react'
+let time
+try {
+  time = eval(`() => {
+    ${before}
+    let start, end
+    start = performance.now()
+    try {
+      ${test.code}
+    } catch(e) {}
+    end = performance.now()
+    return end - start
+  }`)()
+} catch (e) {}
 ```
 
-To use JSX like syntax without a transpilation step you are going to need to use something like [`htm`](https://github.com/developit/htm) by [Jason Miller](https://github.com/developit). The package is available to import directly from [unpkg.com](https://unpkg.com) and can be configured for react like this:
+This timer is available through the `performance.now()` method. Numbers returned from function call are not limited to one-millisecond resolution. Instead, they represent times as floating-point numbers with up to microsecond precision and are monotonic.
 
-```js
-import htm from 'https://unpkg.com/htm?module'
-const html = htm.bind(React.createElement)
-```
-
-[Code splitting](https://reactjs.org/docs/code-splitting.html) on route is achieved at runtime thanks to `React.lazy` and `React.Suspense` which provides a solid basis for a scalable architecture where only the code that required is actually requested from the server.
-
-```js
-const Route = {
-  '/': React.lazy(() => import('./routes/home.js')),
-  '*': React.lazy(() => import('./routes/notfound.js')),
-}
-
-ReactDOM.render(
-  html`
-    <${React.Suspense}
-      fallback=${html`
-        <div></div>
-      `}
-    >
-      <${Route[location.pathname] || Route['*']} />
-    <//>
-  `,
-  document.body
-)
-```
+Currently when the benchmark is ran, each taste case will execute 100 times (although this is subject to becoming variable as to cover more advanced use cases) then both the total and the median execution time (in milliseconds) is recorded and displayed on the graph.
 
 ## Todo
 
-This project is a proof of concept more than anything and still lacks certain features:
+I would like the app to remain simple with very focussed scope but I am interested in a few features that I think could make it even more useful:
 
-- A solution for applying scoped styles to components (something like `emotion` or `styled-components` tagged template literals) that can be imported as an es module.
-- A more feature complete router that handles internal links and history navigation (something like `reach-router` or `navi`) and that can be imported as an es module.
+- Look into running tests from a service worker
+- Support test cases with async code
+- More options around benchmark settings (iteration count etc.)
+- Offer various different graph types and legends
+- More interesting and demonstrative tests cases
+- Being able to archive URLs by putting them into localstorage
+- A proper logo and maybe a better color scheme
+- Making the user interface responsive
 
-The most common limitation I come across is that the popular solutions to these kind of problems rarely export an es module compatible build. If you know of any packages that might accomplish such tasks and that have an es module build then I would love to hear about them so that we can try them out and promote them here!
+I am not interested in:
+
+- Rewriting the project in TypeScript
+- Adding Babel or Webpack (or any build step for that matter)
+
+Although I am currently quite busy with work I will try take the time to review PRs that address these todos in my spare time.
