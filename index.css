@@ -13,7 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #121212;
+  background: #2c2d33;
   display: flex;
   min-height: 100vh;
 }
