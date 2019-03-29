@@ -1,5 +1,6 @@
  {
-  background-color: #282c34;
+  background-color: #222;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -10,5 +11,6 @@
 }
 
 a {
-  color: #61dafb;
+  color: #b6b6b6;
+  margin-top: 3rem;
 }

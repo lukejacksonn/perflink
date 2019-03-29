@@ -12,7 +12,7 @@ const style = {
   editor: {
     width: '100%',
     fontSize: 16,
-    backgroundColor: '#212121',
+    backgroundColor: '#1e1e1e',
     color: 'rgb(255, 255, 255)',
     borderRadius: '1rem',
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New'",
@@ -65,13 +65,19 @@ function debounce(func, wait, immediate) {
 
 let debouncedSetStart
 export default ({ before, setBefore, tests, setTests, setStarted }) => {
-  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 200))
+  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
   return html`
     <article>
       <div className=${style.header}>
-        <h3>Environment Setup</h3>
+        <h3>Preperation Code</h3>
         <div>
-          <button className=${style.start} onClick=${e => setStarted(true)}>
+          <button
+            className=${style.start}
+            onClick=${_ => {
+              setTests(tests.map(test => ({ ...test, median: 0, percent: 0 })))
+              debouncedSetStart(true)
+            }}
+          >
             Run Benchmark
           </button>
         </div>

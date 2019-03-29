@@ -61,16 +61,54 @@ button + button {
 }
 
 h3 {
-  font-size: 1.62rem;
-  font-weight: 200;
-  letter-spacing: 1px;
+  font-size: 3vmin;
+  font-weight: normal;
 }
 
 svg {
   fill: rgba(255, 255, 255, 0.3);
 }
 
-header {
-  width: 6rem;
-  background: #1b1b1b;
+dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background: rgba(20, 20, 20, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+}
+
+dialog h1 {
+  font-size: 20vmin;
+}
+
+dialog h3 {
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+dialog p {
+  max-width: 45ex;
+  text-align: center;
+  line-height: 150%;
+  font-size: 3vmin;
+}
+
+dialog * + * {
+  margin-top: 1rem;
+}
+
+dialog button {
+  color: hotpink;
+  border: 1px solid hotpink;
+  margin-top: 2rem;
+  font-size: 1.38rem;
+  padding: 1rem;
 }

@@ -4,19 +4,31 @@ import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
+const init = location.search
+  ? {
+      started: true,
+      dialog: false,
+      before: atob(location.search.slice(1).split('/')[0]),
+      tests: JSON.parse(atob(location.search.slice(1).split('/')[1])),
+    }
+  : {
+      started: false,
+      dialog: true,
+      before: `const data = [...Array(12800).keys()]\nconst item = Math.random() * 12800 << 0`,
+      tests: [
+        { code: '' },
+        { code: 'data.find(x => x == item)' },
+        { code: 'data.find(x => x == 3200)' },
+        { code: 'data.find(x => x == 6400)' },
+        { code: 'data.find(x => x == 12800)' },
+      ],
+    }
 
 export default () => {
-  const [before, setBefore] = React.useState(
-    `const data = [...Array(12800).keys()]\nconst item = Math.random() * 12800 << 0`
-  )
-  const [started, setStarted] = React.useState(true)
-  const [tests, setTests] = React.useState([
-    { code: '' },
-    { code: 'data.find(x => x == item)' },
-    { code: 'data.find(x => x == 3200)' },
-    { code: 'data.find(x => x == 6400)' },
-    { code: 'data.find(x => x == 12800)' },
-  ])
+  const [before, setBefore] = React.useState(init.before)
+  const [started, setStarted] = React.useState(init.started)
+  const [tests, setTests] = React.useState(init.tests)
+  const [dialog, setDialog] = React.useState(init.dialog)
 
   React.useEffect(() => {
     if (started) {
@@ -52,6 +64,12 @@ export default () => {
         percent: (results[i] / max) * 100,
       }))
 
+      history.pushState(
+        null,
+        null,
+        `?${btoa(before)}/${btoa(JSON.stringify(tests))}`
+      )
+
       setTests(out)
       setStarted(false)
     }
@@ -68,6 +86,25 @@ export default () => {
         setStarted=${setStarted}
       />
       <${Results} tests=${tests} />
+      ${dialog &&
+        html`
+          <dialog open>
+            <h1><i>Perflink</i></h1>
+            <h3>Live Javascript Benchmarking</h3>
+            <p>
+              Write scripts and race them. See results graphed out as you type.
+              Share your findings via URL.
+            </p>
+            <button
+              onClick=${_ => {
+                setDialog(false)
+                setStarted(true)
+              }}
+            >
+              Ok got it, thanks!
+            </button>
+          </dialog>
+        `}
     </main>
   `
 }
