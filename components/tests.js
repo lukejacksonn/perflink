@@ -69,7 +69,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
   return html`
     <article>
       <div className=${style.header}>
-        <h3>Preperation Code</h3>
+        <h3>Preparation Code</h3>
         <div>
           <button
             className=${style.start}
