@@ -30,9 +30,19 @@ $ npx servor
 
 > Live reload is enabled by default with [servor](https://github.com/lukejacksonn/servor) so when you make changes to your code the browser will reload the tab and your changes will be reflected there.
 
+### es-react
+
+This project uses a proprietary version of react called [`es-react`](https://github.com/lukejacksonn/es-react) which allows you to import `React` and `ReactDOM` (version 16.8.3) as an es module from within your app and component files.
+
+```js
+import { React, ReactDOM } from 'https://unpkg.com/es-react'
+```
+
 ## Implementation
 
-Benchmarking involves accurate timing. Historically this has been hard to do due to the limitations of timers in JavaScript. Recently a high resolution timer was added by the WebPerf Working Group to allow measurement in the Web Platform with much greater degree of accuracy. Here is how time of execution is calculated:
+Benchmarking involves accurate timing. Historically this has been hard to do due to the limitations of timers in JavaScript. Recently a high resolution timer was added by the WebPerf Working Group to allow measurement in the Web Platform with much greater degree of accuracy.
+
+Here is how time of execution is calculated:
 
 ```js
 let time
@@ -50,13 +60,17 @@ try {
 } catch (e) {}
 ```
 
+### Measuring
+
 This timer is available through the `performance.now()` method. Numbers returned from function call are not limited to one-millisecond resolution. Instead, they represent times as floating-point numbers with up to microsecond precision and are monotonic.
 
-Currently when the benchmark is ran, each taste case will execute 100 times (although this is subject to becoming variable as to cover more advanced use cases) then both the total and the median execution time (in milliseconds) is recorded and displayed on the graph.
+### Benchmarking
+
+Currently when the benchmark is ran, each tast case will be executed execute 100 times (this is subject to becoming variable as to cover more advanced use cases) then both the total and the median execution time in milliseconds is recorded and displayed on the graph.
 
 ## Todo
 
-I would like the app to remain simple with very focussed scope but I am interested in a few features that I think could make it even more useful:
+I would like the app to remain simple with very focussed scope but I am interested in a few features:
 
 - Look into running tests from a service worker
 - Support test cases with async code
