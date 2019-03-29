@@ -44,9 +44,7 @@ export default () => {
               ${before}
               let start, end
               start = performance.now()
-              try {
-                ${test.code}
-              } catch(e) {}
+              ${test.code}
               end = performance.now()
               return end - start
             }`)()
