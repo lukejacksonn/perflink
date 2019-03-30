@@ -36,14 +36,12 @@ const style = {
   `,
   legend: css`
     position: sticky;
-    left: 3rem;
-    width: calc(100% - 6rem);
+    left: 0;
+    width: 100%;
     text-align: center;
     color: rgba(255, 255, 255, 0.8);
     font-weight: bold;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2rem 0 4rem;
-    margin: 0 3rem;
+    padding: 0 0 4rem;
   `,
 }
 
@@ -57,9 +55,11 @@ export default ({ tests }) => html`
               <span
                 style=${{
                   width: '1px',
-                  transition: 'height 0.5s',
-                  height: `${test.percent ? test.percent : 0}%`,
-                  background: 'rgba(255,255,255,0.8)',
+                  transition: 'all 0.38s',
+                  height: `${!test.percent ? 100 : test.percent}%`,
+                  background: !test.percent
+                    ? 'rgba(0,0,0,0.15)'
+                    : 'rgba(255,255,255,0.5)',
                 }}
               ></span>
             </div>
@@ -71,7 +71,7 @@ export default ({ tests }) => html`
       )}
     </div>
     <div className=${style.legend}>
-      Execution Time (ms)
+      Median Execution Time (ms)
     </div>
   </aside>
 `

@@ -32,6 +32,10 @@ export default () => {
 
   React.useEffect(() => {
     if (started) {
+      !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/) &&
+        alert(
+          'Safari does not have high enough resolution timers to support benchmarking. Please try another browser.'
+        )
       const results = []
       const iterations = 100
       tests.forEach(test => {
