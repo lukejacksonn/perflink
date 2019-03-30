@@ -56,13 +56,15 @@ li > span {
   text-align: center;
 }
 
-button + button {
+li > div > * + * {
   margin-left: 0.62rem;
 }
 
 h3 {
-  font-size: 3vmin;
-  font-weight: normal;
+  font-size: 1.38rem;
+  font-weight: 100;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 svg {

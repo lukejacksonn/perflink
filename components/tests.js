@@ -2,6 +2,8 @@ import { CopyIcon, CloseIcon } from './icons.js'
 import Editor from './editor.js'
 const { highlight, languages } = Prism
 
+const round = num => parseFloat(num).toFixed(0)
+
 const insert = (arr, index, newItem) => [
   ...arr.slice(0, index),
   newItem,
@@ -21,12 +23,8 @@ const style = {
   header: css`
     display: flex;
     align-items: center;
-    padding: 0 1rem 1.62rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 1rem;
     justify-content: space-between;
-  `,
-  clear: css`
-    border: 1px solid red;
   `,
   add: css`
     color: orange;
@@ -40,6 +38,8 @@ const style = {
     position: absolute;
     right: 1rem;
     top: 1.4rem;
+    display: flex;
+    align-items: center;
   `,
   button: css`
     padding: 0;
@@ -74,7 +74,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
           <button
             className=${style.start}
             onClick=${_ => {
-              setTests(tests.map(test => ({ ...test, median: 0, percent: 0 })))
+              setTests(tests.map(test => ({ ...test, median: 0 })))
               debouncedSetStart(true)
             }}
           >
@@ -97,7 +97,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
         <div>
           <button
             className=${style.add}
-            onClick=${e => setTests([{ code: '' }, ...tests])}
+            onClick=${e => setTests([{ code: '', median: 0 }, ...tests])}
           >
             Add Case
           </button>
@@ -119,6 +119,11 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
                 style=${style.editor}
               />
               <div className=${style.controls}>
+                <p>
+                  ${test.error
+                    ? 'Throws Error'
+                    : `${round(test.median * 1000 || 0)} μs`}
+                </p>
                 <button
                   className=${style.button}
                   onClick=${e => setTests(insert(tests, id, tests[id]))}

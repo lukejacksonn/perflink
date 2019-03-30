@@ -14,13 +14,12 @@ const init = location.hash
   : {
       started: false,
       dialog: true,
-      before: `const data = [...Array(12800).keys()]\nconst item = Math.random() * 12800 << 0`,
+      before: `const data = [...Array(4000).keys()]`,
       tests: [
         { code: '' },
-        { code: 'data.find(x => x == item)' },
-        { code: 'data.find(x => x == 3200)' },
-        { code: 'data.find(x => x == 6400)' },
-        { code: 'data.find(x => x == 12800)' },
+        { code: 'data.find(x => x == 1000)' },
+        { code: 'data.find(x => x == 2000)' },
+        { code: 'data.find(x => x == 3000)' },
       ],
     }
 
@@ -34,16 +33,16 @@ export default () => {
     if (started) {
       !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/) &&
         alert(
-          'Safari does not have high enough resolution timers to support benchmarking. Please try another browser.'
+          'Safari does not provide high enough resolution timers to support benchmarking. Please try another browser.'
         )
-      const results = []
+
       const iterations = 100
-      tests.forEach(test => {
+      const results = tests.map(test => {
         const times = []
-        let done = iterations
-        while (done > 0) {
-          let time
-          try {
+        try {
+          let done = iterations
+          while (done > 0) {
+            let time
             time = eval(`() => {
               ${before}
               let start, end
@@ -52,27 +51,30 @@ export default () => {
               end = performance.now()
               return end - start
             }`)()
-          } catch (e) {}
-          times.push(time || 0)
-          done--
+            times.push(time)
+            done--
+          }
+          return {
+            ...test,
+            error: false,
+            median: median(times),
+          }
+        } catch (e) {
+          return {
+            ...test,
+            error: true,
+            median: 0,
+          }
         }
-        results.push(median(times))
       })
-
-      const max = Math.max(...results)
-      const out = tests.map((test, i) => ({
-        ...test,
-        median: results[i],
-        percent: (results[i] / max) * 100,
-      }))
 
       history.pushState(
         null,
         null,
-        `#${btoa(before)}/${btoa(JSON.stringify(tests))}`
+        `#${btoa(before)}/${btoa(JSON.stringify(results))}`
       )
 
-      setTests(out)
+      setTests(results)
       setStarted(false)
     }
   }, [started])

@@ -11,7 +11,7 @@ const style = {
   graph: css`
     margin: 0 auto;
     flex: 1 1 100%;
-    padding: 4rem 3rem 2rem;
+    padding: 4rem;
     display: flex;
     align-items: flex-end;
   `,
@@ -19,17 +19,17 @@ const style = {
     display: flex;
     flex-direction: column;
     height: 100%;
-    marginleft: ${index === 0 ? 0 : '2rem'};
+    margin-left: ${index === 0 ? 0 : '3rem'};
   `,
   bar: css`
     display: flex;
-    justify-content: center;
     align-items: flex-end;
-    flex: 1 1 100%;
+    background: rgba(0, 0, 0, 0.1);
+    height: 100%;
   `,
   label: css`
     width: 3rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
     text-align: center;
     font-weight: 100;
     color: rgba(255, 255, 255, 0.5);
@@ -40,38 +40,34 @@ const style = {
     width: 100%;
     text-align: center;
     color: rgba(255, 255, 255, 0.8);
-    font-weight: bold;
-    padding: 0 0 4rem;
+    font-weight: 200;
+    padding: 0 0 3rem;
   `,
+}
+
+const Bar = tests => (test, i) => {
+  const max = Math.max(...tests.map(x => x.median))
+  const percent = test.median ? (test.median / max) * 100 : 0
+  return html`
+    <div className=${style.result(i)}>
+      <div className=${style.bar}>
+        <span
+          style=${{
+            width: '3px',
+            transition: 'height 0.3s',
+            height: `${test.error ? 100 : percent}%`,
+            background: test.error ? 'crimson' : 'rgba(255,255,255,0.4)',
+          }}
+        ></span>
+      </div>
+    </div>
+  `
 }
 
 export default ({ tests }) => html`
   <aside className=${style.aside}>
     <div className=${style.graph}>
-      ${tests.map(
-        (test, i) => html`
-          <div className=${style.result(i)}>
-            <div className=${style.bar}>
-              <span
-                style=${{
-                  width: '1px',
-                  transition: 'all 0.38s',
-                  height: `${!test.percent ? 100 : test.percent}%`,
-                  background: !test.percent
-                    ? 'rgba(0,0,0,0.15)'
-                    : 'rgba(255,255,255,0.5)',
-                }}
-              ></span>
-            </div>
-            <div className=${style.label}>
-              ${round(test.median || 0)}
-            </div>
-          </div>
-        `
-      )}
-    </div>
-    <div className=${style.legend}>
-      Median Execution Time (ms)
+      ${tests.map(Bar(tests))}
     </div>
   </aside>
 `
