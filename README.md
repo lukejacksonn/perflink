@@ -12,7 +12,7 @@ The motivation here was to create a single page app alternative to [jsperf](http
 - ♻️ Benchmarks run automatically when test cases change
 - 🌍 Serializable state encoded into shareable URLs
 - ⏱ Accurate timing using `performance.now()`
-- 🗜 Super light weight – almost no dependenciess
+- 🗜 Super light weight – almost no dependencies
 
 ## Usage
 
@@ -51,9 +51,7 @@ try {
     ${before}
     let start, end
     start = performance.now()
-    try {
-      ${test.code}
-    } catch(e) {}
+    ${test.code}
     end = performance.now()
     return end - start
   }`)()
