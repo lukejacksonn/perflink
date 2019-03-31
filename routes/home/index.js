@@ -105,7 +105,7 @@ export default () => {
                 setStarted(true)
               }}
             >
-              Ok got it, thanks!
+              Get Started
             </button>
           </dialog>
         `}

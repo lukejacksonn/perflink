@@ -121,7 +121,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
               <div className=${style.controls}>
                 <p>
                   ${test.error
-                    ? 'Throws Error'
+                    ? 'Failed'
                     : `${round(test.median * 1000 || 0)} μs`}
                 </p>
                 <button

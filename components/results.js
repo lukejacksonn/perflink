@@ -26,6 +26,8 @@ const style = {
     align-items: flex-end;
     background: rgba(0, 0, 0, 0.1);
     height: 100%;
+    border-radius: 5px;
+    overflow: hidden;
   `,
   label: css`
     width: 3rem;
