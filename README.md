@@ -4,7 +4,7 @@
 
 The motivation here was to create a single page app like [jsperf](https://jsperf.com) – which is commonly used to compare performance characteristics of different Javascript code snippets – but with improved usability and portibility of results. It is a frontend only static web app with no build step and is hosted on Github pages.
 
-![perflink](https://user-images.githubusercontent.com/1457604/55242563-6c959f00-5235-11e9-8cb5-f1f140781f3b.gif)
+![perflink3](https://user-images.githubusercontent.com/1457604/55292888-f5ecd300-53e7-11e9-94fb-3266adaaf235.gif)
 
 ## Features
 
