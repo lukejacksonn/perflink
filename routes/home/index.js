@@ -104,7 +104,7 @@ export default () => {
                 setStarted(true)
               }}
             >
-              Get Started
+              Start Experimenting
             </button>
           </dialog>
         `}
