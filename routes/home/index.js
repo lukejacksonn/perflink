@@ -14,12 +14,11 @@ const init = location.hash
   : {
       started: false,
       dialog: true,
-      before: `const data = [...Array(4000).keys()]`,
+      before: `const data = [...Array(10000).keys()]`,
       tests: [
         { code: '' },
-        { code: 'data.find(x => x == 1000)' },
-        { code: 'data.find(x => x == 2000)' },
-        { code: 'data.find(x => x == 3000)' },
+        { code: 'data.find(x => x == 5000)' },
+        { code: 'data.find(x => x == 10000)' },
       ],
     }
 

@@ -18,8 +18,9 @@ const style = {
   result: index => css`
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100%;
-    margin-left: ${index === 0 ? 0 : '3rem'};
+    margin-left: ${index === 0 ? 0 : '0.5rem'};
   `,
   bar: css`
     display: flex;
@@ -61,6 +62,9 @@ const Bar = tests => (test, i) => {
             background: test.error ? 'crimson' : 'rgba(255,255,255,0.4)',
           }}
         ></span>
+      </div>
+      <div className=${style.label}>
+        ${percent.toFixed(0)}%
       </div>
     </div>
   `
