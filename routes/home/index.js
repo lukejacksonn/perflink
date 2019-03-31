@@ -67,7 +67,7 @@ export default () => {
         }
       })
 
-      history.pushState(
+      history.replaceState(
         null,
         null,
         `#${btoa(before)}/${btoa(JSON.stringify(results))}`
