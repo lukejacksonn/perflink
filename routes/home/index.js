@@ -89,7 +89,7 @@ export default () => {
         setStarted=${setStarted}
       />
       <${Results} tests=${tests} />
-      ${dialog &&
+      ${(dialog || window.innerWidth < 900) &&
         html`
           <dialog open>
             <h1><i>Perflink</i></h1>
@@ -100,8 +100,14 @@ export default () => {
             </p>
             <button
               onClick=${_ => {
-                setDialog(false)
-                setStarted(true)
+                if (window.innerWidth < 900) {
+                  alert(
+                    'This screen size is not supported yet. Please expand the window to larger than 900px wide and try again.'
+                  )
+                } else {
+                  setDialog(false)
+                  setStarted(true)
+                }
               }}
             >
               Start Experimenting
