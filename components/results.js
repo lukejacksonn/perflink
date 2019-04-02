@@ -71,7 +71,7 @@ const Bar = tests => (test, i) => {
 }
 
 export default ({ tests }) => html`
-  <aside className=${style.aside}>
+  <aside className="graph">
     <div className=${style.graph}>
       ${tests.map(Bar(tests))}
     </div>

@@ -14,7 +14,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #2c2d33;
-  display: flex;
   min-height: 100vh;
 }
 
@@ -35,4 +34,54 @@ button {
 button:hover {
   opacity: 1;
   cursor: pointer;
+}
+
+.missing {
+  background-color: #222;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.missing a {
+  color: #b6b6b6;
+  margin-top: 3rem;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 2fr;
+  grid-template-areas: 
+    "graph"
+    "tests";
+}
+
+@media (min-width: 768px) {
+  .app {
+    grid-template-areas: "tests graph";
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: initial;
+  }
+}
+
+.tests {
+  grid-area: tests;
+
+  padding: 3rem;
+  background: #2f3138;
+  color: rgba(255, 255, 255, 0.62);
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.graph {
+  grid-area: graph;
+
+  background: #2c2d33;
 }
