@@ -9,7 +9,7 @@ const init = location.hash
       started: true,
       dialog: false,
       before: atob(location.hash.slice(1).split('/')[0]),
-      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1]))
+      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
     }
   : {
       started: false,
@@ -18,8 +18,8 @@ const init = location.hash
       tests: [
         { code: '' },
         { code: 'data.find(x => x == 5000)' },
-        { code: 'data.find(x => x == 10000)' }
-      ]
+        { code: 'data.find(x => x == 10000)' },
+      ],
     }
 
 export default () => {
@@ -56,13 +56,13 @@ export default () => {
           return {
             ...test,
             error: false,
-            median: median(times)
+            median: median(times),
           }
         } catch (e) {
           return {
             ...test,
             error: true,
-            median: 0
+            median: 0,
           }
         }
       })
@@ -89,7 +89,7 @@ export default () => {
         setStarted=${setStarted}
       />
       <${Results} tests=${tests} />
-      ${(dialog || window.innerWidth < 900) &&
+      ${dialog &&
         html`
           <dialog open>
             <h1><i>Perflink</i></h1>
