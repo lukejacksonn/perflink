@@ -67,7 +67,7 @@ let debouncedSetStart
 export default ({ before, setBefore, tests, setTests, setStarted }) => {
   !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
   return html`
-    <article>
+    <article className="tests">
       <div className=${style.header}>
         <h3>Preparation Code</h3>
         <div>

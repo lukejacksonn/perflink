@@ -1,24 +1,3 @@
- {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-flow: row wrap;
-}
-
-article {
-  width: 62%;
-  padding: 3rem;
-  background: #2f3138;
-  color: rgba(255, 255, 255, 0.62);
-  max-height: 100vh;
-  overflow-y: auto;
-}
-
-aside {
-  width: 38%;
-  background: #2c2d33;
-}
-
 p {
   color: rgba(255, 255, 255, 0.8);
 }

@@ -1,16 +1,1 @@
- {
-  background-color: #222;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-a {
-  color: #b6b6b6;
-  margin-top: 3rem;
-}
