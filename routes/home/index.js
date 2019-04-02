@@ -43,12 +43,12 @@ export default () => {
           while (done > 0) {
             let time
             time = eval(`() => {
-              ${before}
-              let start, end
-              start = performance.now()
-              ${test.code}
-              end = performance.now()
-              return end - start
+              ${before};
+              let start, end;
+              start = performance.now();
+              ${test.code};
+              end = performance.now();
+              return end - start;
             }`)()
             times.push(time)
             done--
