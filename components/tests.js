@@ -20,12 +20,6 @@ const style = {
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New'",
     lineHeight: '170%',
   },
-  header: css`
-    display: flex;
-    align-items: center;
-    padding: 0 1rem;
-    justify-content: space-between;
-  `,
   add: css`
     color: orange;
     border: 1px solid orange;
@@ -63,12 +57,34 @@ function debounce(func, wait, immediate) {
   }
 }
 
+export const TestControls = ({ id, test, tests, setTests }) => {
+  return html`
+    <div className="test__controls">
+      <p>
+        ${test.error ? 'Failed' : `${round(test.median * 1000 || 0)} μs`}
+      </p>
+      <button
+        className=${style.button}
+        onClick=${e => setTests(insert(tests, id, tests[id]))}
+      >
+        <${CopyIcon} />
+      </button>
+      <button
+        className=${style.button}
+        onClick=${e => setTests(tests.filter((_, y) => y !== id))}
+      >
+        <${CloseIcon} />
+      </button>
+    </div>
+  `
+}
+
 let debouncedSetStart
 export default ({ before, setBefore, tests, setTests, setStarted }) => {
   !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
   return html`
     <article className="tests">
-      <div className=${style.header}>
+      <div className="tests__header">
         <h3>Preparation Code</h3>
         <div>
           <button
@@ -92,7 +108,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
         padding=${20}
         style=${style.editor}
       />
-      <div className=${style.header}>
+      <div className="tests__header">
         <h3>Test Cases</h3>
         <div>
           <button
@@ -106,37 +122,27 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
       <ul>
         ${tests.map(
           (test, id) => html`
-            <li key=${id}>
-              <${Editor}
-                key=${id}
-                value=${test.code}
-                onValueChange=${code => {
-                  setTests(tests.map((t, i) => (i == id ? { ...t, code } : t)))
-                  debouncedSetStart(true)
-                }}
-                highlight=${code => highlight(code, languages.js)}
-                padding=${20}
-                style=${style.editor}
-              />
-              <div className=${style.controls}>
-                <p>
-                  ${test.error
-                    ? 'Failed'
-                    : `${round(test.median * 1000 || 0)} μs`}
-                </p>
-                <button
-                  className=${style.button}
-                  onClick=${e => setTests(insert(tests, id, tests[id]))}
-                >
-                  <${CopyIcon} //>
-                </button>
-                <button
-                  className=${style.button}
-                  onClick=${e => setTests(tests.filter((_, y) => y !== id))}
-                >
-                  <${CloseIcon} //>
-                </button>
+            <li key=${id} className="test">
+              <div className="test__editor">
+                <${Editor}
+                  key=${id}
+                  value=${test.code}
+                  onValueChange=${code => {
+                    setTests(
+                      tests.map((t, i) => (i == id ? { ...t, code } : t))
+                    )
+                    debouncedSetStart(true)
+                  }}
+                  highlight=${code => highlight(code, languages.js)}
+                  padding=${20}
+                />
               </div>
+              <${TestControls}
+                id=${id}
+                tests=${tests}
+                test=${test}
+                setTests=${setTests}
+              />
             </li>
           `
         )}
