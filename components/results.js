@@ -2,7 +2,6 @@ const round = num => parseFloat(num).toFixed(2)
 
 const style = {
   aside: css`
-    position: relative;
     display: flex;
     flex-direction: column;
     color: #fff;
@@ -15,12 +14,11 @@ const style = {
     display: flex;
     align-items: flex-end;
   `,
-  result: index => css`
+  result: css`
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
-    margin-left: ${index === 0 ? 0 : '0.5rem'};
   `,
   bar: css`
     display: flex;
@@ -52,7 +50,7 @@ const Bar = tests => (test, i) => {
   const max = Math.max(...tests.map(x => x.median))
   const percent = test.median ? (test.median / max) * 100 : 0
   return html`
-    <div className=${style.result(i)}>
+    <div className=${style.result}>
       <div className=${style.bar}>
         <span
           style=${{
@@ -72,8 +70,6 @@ const Bar = tests => (test, i) => {
 
 export default ({ tests }) => html`
   <aside className="graph">
-    <div className=${style.graph}>
-      ${tests.map(Bar(tests))}
-    </div>
+    ${tests.map(Bar(tests))}
   </aside>
 `

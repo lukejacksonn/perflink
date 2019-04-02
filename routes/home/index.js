@@ -9,7 +9,7 @@ const init = location.hash
       started: true,
       dialog: false,
       before: atob(location.hash.slice(1).split('/')[0]),
-      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
+      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1]))
     }
   : {
       started: false,
@@ -18,8 +18,8 @@ const init = location.hash
       tests: [
         { code: '' },
         { code: 'data.find(x => x == 5000)' },
-        { code: 'data.find(x => x == 10000)' },
-      ],
+        { code: 'data.find(x => x == 10000)' }
+      ]
     }
 
 export default () => {
@@ -56,13 +56,13 @@ export default () => {
           return {
             ...test,
             error: false,
-            median: median(times),
+            median: median(times)
           }
         } catch (e) {
           return {
             ...test,
             error: true,
-            median: 0,
+            median: 0
           }
         }
       })
@@ -79,43 +79,35 @@ export default () => {
   }, [started])
 
   return html`
-    <div className=${styles}>
-      <main className="app">
-        <${Tests}
-          before=${before}
-          setBefore=${setBefore}
-          tests=${tests}
-          setTests=${setTests}
-          started=${started}
-          setStarted=${setStarted}
-        />
-        <${Results} tests=${tests} />
-        ${(dialog || window.innerWidth < 900) &&
-          html`
-            <dialog open>
-              <h1><i>Perflink</i></h1>
-              <h3>Live Javascript Benchmarking</h3>
-              <p>
-                Write scripts and race them. See results graphed out as you
-                type. Share your findings via URL.
-              </p>
-              <button
-                onClick=${_ => {
-                  if (window.innerWidth < 900) {
-                    alert(
-                      'This screen size is not supported yet. Please expand the window to larger than 900px wide and try again.'
-                    )
-                  } else {
-                    setDialog(false)
-                    setStarted(true)
-                  }
-                }}
-              >
-                Start Experimenting
-              </button>
-            </dialog>
-          `}
-      </main>
-    </div>
+    <main className="app">
+      <${Tests}
+        before=${before}
+        setBefore=${setBefore}
+        tests=${tests}
+        setTests=${setTests}
+        started=${started}
+        setStarted=${setStarted}
+      />
+      <${Results} tests=${tests} />
+      ${dialog &&
+        html`
+          <dialog open>
+            <h1><i>Perflink</i></h1>
+            <h3>Live Javascript Benchmarking</h3>
+            <p>
+              Write scripts and race them. See results graphed out as you type.
+              Share your findings via URL.
+            </p>
+            <button
+              onClick=${_ => {
+                setDialog(false)
+                setStarted(true)
+              }}
+            >
+              Start Experimenting
+            </button>
+          </dialog>
+        `}
+    </main>
   `
 }
