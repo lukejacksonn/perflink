@@ -56,23 +56,22 @@ button:hover {
 .app {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 30vh 1fr;
-  grid-template-areas: 
-    "graph"
-    "tests";
+  grid-template-rows: 62vh auto;
+  grid-template-areas:
+    'graph'
+    'tests';
 
-  height: 100vh;  
-  overflow: hidden;
+  height: 100vh;
+  overflow-y: scroll;
 }
 
 .tests {
   grid-area: tests;
 
-  padding: 1rem;
+  padding: 3rem;
   background: #2f3138;
   color: rgba(255, 255, 255, 0.62);
   max-height: 100vh;
-  overflow-y: auto;
 }
 
 .tests__header {
@@ -89,11 +88,12 @@ button:hover {
   display: flex;
   justify-content: center;
 
-  padding: 1rem 0;
+  padding: 4rem;
+  overflow-x: auto;
 }
 
-.graph > div {
-  margin: 0 1rem;
+.graph > div + div {
+  margin-left: 1rem;
 }
 
 .test {
@@ -117,26 +117,37 @@ button:hover {
   flex-shrink: 0;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 
   margin-left: auto;
-  padding: 0 1rem;
+  padding: 1.3rem 1rem 1rem;
 }
 
 /* Media queries
 ------------------------------------------------------------------------------*/
-@media (min-width: 768px) {
+
+@media (orientation: landscape) {
   .app {
-    grid-template-areas: "tests graph";
+    grid-template-areas: 'tests graph';
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 1fr;
   }
 
   .tests {
-    padding: 3rem;
+    overflow-y: auto;
   }
 
   .tests__header {
     padding: 0 1rem;
+  }
+
+  .graph {
+    max-width: 38vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .tests {
+    padding: 2rem;
   }
 }

@@ -85,7 +85,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
   return html`
     <article className="tests">
       <div className="tests__header">
-        <h3>Preparation Code</h3>
+        <h3>Setup Code</h3>
         <div>
           <button
             className=${style.start}

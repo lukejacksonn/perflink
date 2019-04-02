@@ -1,5 +1,3 @@
-const styles = css`/routes/home/index.css`
-
 import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
