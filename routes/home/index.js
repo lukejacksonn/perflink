@@ -1,5 +1,3 @@
-const styles = css`/routes/home/index.css`
-
 import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
@@ -79,7 +77,7 @@ export default () => {
   }, [started])
 
   return html`
-    <main className=${styles}>
+    <main className="app">
       <${Tests}
         before=${before}
         setBefore=${setBefore}
@@ -89,7 +87,7 @@ export default () => {
         setStarted=${setStarted}
       />
       <${Results} tests=${tests} />
-      ${(dialog || window.innerWidth < 900) &&
+      ${dialog &&
         html`
           <dialog open>
             <h1><i>Perflink</i></h1>
@@ -100,14 +98,8 @@ export default () => {
             </p>
             <button
               onClick=${_ => {
-                if (window.innerWidth < 900) {
-                  alert(
-                    'This screen size is not supported yet. Please expand the window to larger than 900px wide and try again.'
-                  )
-                } else {
-                  setDialog(false)
-                  setStarted(true)
-                }
+                setDialog(false)
+                setStarted(true)
               }}
             >
               Start Experimenting

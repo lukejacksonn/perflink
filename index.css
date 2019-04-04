@@ -14,7 +14,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #2c2d33;
-  display: flex;
   min-height: 100vh;
 }
 
@@ -35,4 +34,120 @@ button {
 button:hover {
   opacity: 1;
   cursor: pointer;
+}
+
+.missing {
+  background-color: #222;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.missing a {
+  color: #b6b6b6;
+  margin-top: 3rem;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 62vh auto;
+  grid-template-areas:
+    'graph'
+    'tests';
+
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.tests {
+  grid-area: tests;
+
+  padding: 3rem;
+  background: #2f3138;
+  color: rgba(255, 255, 255, 0.62);
+  max-height: 100vh;
+}
+
+.tests__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0;
+}
+
+.graph {
+  grid-area: graph;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 4rem;
+  overflow-x: auto;
+}
+
+.graph > div + div {
+  margin-left: 1rem;
+}
+
+.test {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  border-radius: 1rem;
+  background-color: #2a2b2f;
+  color: #fff;
+}
+
+.test__editor {
+  flex: 1;
+
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
+  line-height: inherit;
+}
+
+.test__controls {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: flex-start;
+
+  margin-left: auto;
+  padding: 1.3rem 1rem 1rem;
+}
+
+/* Media queries
+------------------------------------------------------------------------------*/
+
+@media (orientation: landscape) {
+  .app {
+    grid-template-areas: 'tests graph';
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .tests {
+    overflow-y: auto;
+  }
+
+  .tests__header {
+    padding: 0 1rem;
+  }
+
+  .graph {
+    max-width: 38vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .tests {
+    padding: 2rem;
+  }
 }
