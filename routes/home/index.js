@@ -1,7 +1,6 @@
 import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
-const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
 const init = location.hash
   ? {
       started: true,
@@ -28,33 +27,22 @@ export default () => {
 
   React.useEffect(() => {
     if (started) {
-      !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/) &&
-        alert(
-          'Safari does not provide high enough resolution timers to support benchmarking. Please try another browser.'
-        )
-
-      const iterations = 100
       const results = tests.map(test => {
-        const times = []
         try {
-          let done = iterations
-          while (done > 0) {
-            let time
-            time = eval(`() => {
+          const median = eval(`() => {
               ${before};
-              let start, end;
-              start = performance.now();
-              ${test.code};
-              end = performance.now();
-              return end - start;
+              let start = performance.now(), end, iterations = 0
+              do {
+                ${test.code};
+                iterations++
+                end = performance.now()
+              } while(end - start < 1000)
+              return (end - start) / iterations
             }`)()
-            times.push(time)
-            done--
-          }
           return {
             ...test,
             error: false,
-            median: median(times),
+            median,
           }
         } catch (e) {
           return {
