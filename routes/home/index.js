@@ -27,20 +27,22 @@ export default () => {
   const [dialog, setDialog] = React.useState(init.dialog)
 
   React.useEffect(() => {
-    if (started) {
-      !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/) &&
-        alert(
-          'Safari does not provide high enough resolution timers to support benchmarking. Please try another browser.'
-        )
+    ;(async () => {
+      if (started) {
+        !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/) &&
+          alert(
+            'Safari does not provide high enough resolution timers to support benchmarking. Please try another browser.'
+          )
 
-      const iterations = 100
-      const results = tests.map(test => {
-        const times = []
-        try {
-          let done = iterations
-          while (done > 0) {
-            let time
-            time = eval(`() => {
+        const iterations = 100
+        let results = []
+
+        for (const test of tests) {
+          const times = []
+          try {
+            let done = iterations
+            while (done > 0) {
+              const time = eval(`async () => {
               ${before};
               let start, end;
               start = performance.now();
@@ -48,32 +50,39 @@ export default () => {
               end = performance.now();
               return end - start;
             }`)()
-            times.push(time)
-            done--
-          }
-          return {
-            ...test,
-            error: false,
-            median: median(times),
-          }
-        } catch (e) {
-          return {
-            ...test,
-            error: true,
-            median: 0,
+              times.push(await time)
+              done--
+            }
+            results = [
+              ...results,
+              {
+                ...test,
+                error: false,
+                median: median(times),
+              },
+            ]
+          } catch (e) {
+            results = [
+              ...results,
+              {
+                ...test,
+                error: true,
+                median: 0,
+              },
+            ]
           }
         }
-      })
 
-      history.replaceState(
-        null,
-        null,
-        `#${btoa(before)}/${btoa(JSON.stringify(results))}`
-      )
+        history.replaceState(
+          null,
+          null,
+          `#${btoa(before)}/${btoa(JSON.stringify(results))}`
+        )
 
-      setTests(results)
-      setStarted(false)
-    }
+        setTests(results)
+        setStarted(false)
+      }
+    })()
   }, [started])
 
   return html`
