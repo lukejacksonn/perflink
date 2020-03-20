@@ -1,3 +1,7 @@
+import { h } from 'https://cdn.pika.dev/preact@10.3.3'
+import htm from 'https://cdn.pika.dev/htm@3.0.3'
+const html = htm.bind(h)
+
 export const CopyIcon = () => html`
   <svg
     xmlns="http://www.w3.org/2000/svg"
