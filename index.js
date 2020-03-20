@@ -43,47 +43,29 @@ const app = () => {
 
   useEffect(() => {
     if (started) {
-      const iterations = 100
-      const results = tests.map(test => {
-        const times = []
-        try {
-          let done = iterations
-          while (done > 0) {
-            let time
-            time = eval(`() => {
-              ${before};
-              let start, end;
-              start = performance.now();
-              ${test.code};
-              end = performance.now();
-              return end - start;
-            }`)()
-            times.push(time)
-            done--
-          }
-          return {
-            ...test,
-            error: false,
-            median: median(times),
-          }
-        } catch (e) {
-          return {
-            ...test,
-            error: true,
-            median: 0,
-          }
-        }
+      Promise.all(
+        tests.map(
+          test =>
+            new Promise((resolve, reject) => {
+              var worker = new Worker('/run.js')
+              worker.postMessage([before, test])
+              worker.onmessage = e => resolve(e.data)
+            })
+        )
+      ).then(results => {
+        console.log('done', results)
+        dispatch({ tests: results, started: false })
       })
-
-      history.replaceState(
-        null,
-        null,
-        `#${btoa(before)}/${btoa(JSON.stringify(results))}`
-      )
-
-      dispatch({ tests: results, started: false })
     }
-  }, [started])
+  }, [started, tests])
+
+  useEffect(() => {
+    history.replaceState(
+      null,
+      null,
+      `#${btoa(before)}/${btoa(JSON.stringify(tests))}`
+    )
+  }, [tests])
 
   return html`
     <main className="app">
