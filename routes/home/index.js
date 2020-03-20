@@ -20,11 +20,14 @@ const init = location.hash
       ],
     }
 
+const reducer = (state, update) => ({
+  ...state,
+  ...(typeof update === 'function' ? update(state) : update),
+})
+
 export default () => {
-  const [before, setBefore] = React.useState(init.before)
-  const [started, setStarted] = React.useState(init.started)
-  const [tests, setTests] = React.useState(init.tests)
-  const [dialog, setDialog] = React.useState(init.dialog)
+  const [state, dispatch] = React.useReducer(reducer, init)
+  const { before, started, tests, dialog } = state
 
   React.useEffect(() => {
     if (started) {
@@ -71,22 +74,14 @@ export default () => {
         `#${btoa(before)}/${btoa(JSON.stringify(results))}`
       )
 
-      setTests(results)
-      setStarted(false)
+      dispatch({ tests: results, started: false })
     }
   }, [started])
 
   return html`
     <main className="app">
-      <${Tests}
-        before=${before}
-        setBefore=${setBefore}
-        tests=${tests}
-        setTests=${setTests}
-        started=${started}
-        setStarted=${setStarted}
-      />
-      <${Results} tests=${tests} />
+      <${Tests} state=${state} dispatch=${dispatch} />
+      <${Results} state=${state} />
       ${dialog &&
         html`
           <dialog open>
@@ -98,8 +93,7 @@ export default () => {
             </p>
             <button
               onClick=${_ => {
-                setDialog(false)
-                setStarted(true)
+                dispatch({ dialog: false, started: true })
               }}
             >
               Start Experimenting
