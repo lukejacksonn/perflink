@@ -57,7 +57,7 @@ function debounce(func, wait, immediate) {
   }
 }
 
-export const TestControls = ({ id, test, tests, setTests }) => {
+export const TestControls = ({ id, test, tests, dispatch }) => {
   return html`
     <div className="test__controls">
       <p>
@@ -65,13 +65,13 @@ export const TestControls = ({ id, test, tests, setTests }) => {
       </p>
       <button
         className=${style.button}
-        onClick=${e => setTests(insert(tests, id, tests[id]))}
+        onClick=${e => dispatch({ tests: insert(tests, id, tests[id]) })}
       >
         <${CopyIcon} />
       </button>
       <button
         className=${style.button}
-        onClick=${e => setTests(tests.filter((_, y) => y !== id))}
+        onClick=${e => dispatch({ tests: tests.filter((_, y) => y !== id) })}
       >
         <${CloseIcon} />
       </button>
@@ -80,8 +80,8 @@ export const TestControls = ({ id, test, tests, setTests }) => {
 }
 
 let debouncedSetStart
-export default ({ before, setBefore, tests, setTests, setStarted }) => {
-  !debouncedSetStart && (debouncedSetStart = debounce(setStarted, 500))
+export default ({ state, dispatch }) => {
+  const { before, tests } = state
   return html`
     <article className="tests">
       <div className="tests__header">
@@ -90,8 +90,10 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
           <button
             className=${style.start}
             onClick=${_ => {
-              setTests(tests.map(test => ({ ...test, median: 0 })))
-              debouncedSetStart(true)
+              dispatch({
+                tests: tests.map(test => ({ ...test, median: 0 })),
+                started: true,
+              })
             }}
           >
             Run Benchmark
@@ -100,10 +102,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
       </div>
       <${Editor}
         value=${before}
-        onValueChange=${code => {
-          setBefore(code)
-          debouncedSetStart(true)
-        }}
+        onValueChange=${before => dispatch({ before })}
         highlight=${code => highlight(code, languages.js)}
         padding=${20}
         style=${style.editor}
@@ -113,7 +112,8 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
         <div>
           <button
             className=${style.add}
-            onClick=${e => setTests([{ code: '', median: 0 }, ...tests])}
+            onClick=${e =>
+              dispatch({ tests: [{ code: '', median: 0 }, ...tests] })}
           >
             Add Case
           </button>
@@ -128,10 +128,11 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
                   key=${id}
                   value=${test.code}
                   onValueChange=${code => {
-                    setTests(
-                      tests.map((t, i) => (i == id ? { ...t, code } : t))
-                    )
-                    debouncedSetStart(true)
+                    dispatch({
+                      tests: tests.map((t, i) =>
+                        i == id ? { ...t, code } : t
+                      ),
+                    })
                   }}
                   highlight=${code => highlight(code, languages.js)}
                   padding=${20}
@@ -141,7 +142,7 @@ export default ({ before, setBefore, tests, setTests, setStarted }) => {
                 id=${id}
                 tests=${tests}
                 test=${test}
-                setTests=${setTests}
+                dispatch=${dispatch}
               />
             </li>
           `

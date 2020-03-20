@@ -68,8 +68,11 @@ const Bar = tests => (test, i) => {
   `
 }
 
-export default ({ tests }) => html`
-  <aside className="graph">
-    ${tests.map(Bar(tests))}
-  </aside>
-`
+export default ({ state }) => {
+  const { tests } = state
+  return html`
+    <aside className="graph">
+      ${tests.map(Bar(tests))}
+    </aside>
+  `
+}
