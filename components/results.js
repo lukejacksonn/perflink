@@ -52,8 +52,8 @@ const style = {
 }
 
 const Bar = tests => (test, i) => {
-  const max = Math.max(...tests.map(x => x.median))
-  const percent = test.median ? (test.median / max) * 100 : 0
+  const max = Math.max(...tests.map(x => x.ops))
+  const percent = test.ops ? (test.ops / max) * 100 : 0
   return html`
     <div className=${style.result}>
       <div className=${style.bar}>
