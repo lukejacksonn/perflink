@@ -1,3 +1,5 @@
+import * as React from 'https://cdn.pika.dev/preact@10.3.3'
+
 var _extends =
   Object.assign ||
   function(target) {
@@ -125,409 +127,420 @@ var Editor = (function(_React$Component) {
     }
 
     return (
-      (_ret = ((_temp = ((_this = _possibleConstructorReturn(
-        this,
-        (_ref = Editor.__proto__ || Object.getPrototypeOf(Editor)).call.apply(
-          _ref,
-          [this].concat(args)
-        )
-      )),
-      _this)),
-      (_this.state = {
-        capture: true,
-      }),
-      (_this._recordCurrentState = function() {
-        var input = _this._input
+      (_ret =
+        ((_temp =
+          ((_this = _possibleConstructorReturn(
+            this,
+            (_ref =
+              Editor.__proto__ || Object.getPrototypeOf(Editor)).call.apply(
+              _ref,
+              [this].concat(args)
+            )
+          )),
+          _this)),
+        (_this.state = {
+          capture: true,
+        }),
+        (_this._recordCurrentState = function() {
+          var input = _this._input
 
-        if (!input) return
+          if (!input) return
 
-        // Save current state of the input
-        var value = input.value,
-          selectionStart = input.selectionStart,
-          selectionEnd = input.selectionEnd
+          // Save current state of the input
+          var value = input.value,
+            selectionStart = input.selectionStart,
+            selectionEnd = input.selectionEnd
 
-        _this._recordChange({
-          value: value,
-          selectionStart: selectionStart,
-          selectionEnd: selectionEnd,
-        })
-      }),
-      (_this._getLines = function(text, position) {
-        return text.substring(0, position).split('\n')
-      }),
-      (_this._recordChange = function(record) {
-        var overwrite =
-          arguments.length > 1 && arguments[1] !== undefined
-            ? arguments[1]
-            : false
-        var _this$_history = _this._history,
-          stack = _this$_history.stack,
-          offset = _this$_history.offset
+          _this._recordChange({
+            value: value,
+            selectionStart: selectionStart,
+            selectionEnd: selectionEnd,
+          })
+        }),
+        (_this._getLines = function(text, position) {
+          return text.substring(0, position).split('\n')
+        }),
+        (_this._recordChange = function(record) {
+          var overwrite =
+            arguments.length > 1 && arguments[1] !== undefined
+              ? arguments[1]
+              : false
+          var _this$_history = _this._history,
+            stack = _this$_history.stack,
+            offset = _this$_history.offset
 
-        if (stack.length && offset > -1) {
-          // When something updates, drop the redo operations
-          _this._history.stack = stack.slice(0, offset + 1)
+          if (stack.length && offset > -1) {
+            // When something updates, drop the redo operations
+            _this._history.stack = stack.slice(0, offset + 1)
 
-          // Limit the number of operations to 100
-          var count = _this._history.stack.length
+            // Limit the number of operations to 100
+            var count = _this._history.stack.length
 
-          if (count > HISTORY_LIMIT) {
-            var extras = count - HISTORY_LIMIT
+            if (count > HISTORY_LIMIT) {
+              var extras = count - HISTORY_LIMIT
 
-            _this._history.stack = stack.slice(extras, count)
-            _this._history.offset = Math.max(_this._history.offset - extras, 0)
+              _this._history.stack = stack.slice(extras, count)
+              _this._history.offset = Math.max(
+                _this._history.offset - extras,
+                0
+              )
+            }
           }
-        }
 
-        var timestamp = Date.now()
+          var timestamp = Date.now()
 
-        if (overwrite) {
+          if (overwrite) {
+            var last = _this._history.stack[_this._history.offset]
+
+            if (last && timestamp - last.timestamp < HISTORY_TIME_GAP) {
+              // A previous entry exists and was in short interval
+
+              // Match the last word in the line
+              var re = /[^a-z0-9]([a-z0-9]+)$/i
+
+              // Get the previous line
+              var previous = _this
+                ._getLines(last.value, last.selectionStart)
+                .pop()
+                .match(re)
+
+              // Get the current line
+              var current = _this
+                ._getLines(record.value, record.selectionStart)
+                .pop()
+                .match(re)
+
+              if (previous && current && current[1].startsWith(previous[1])) {
+                // The last word of the previous line and current line match
+                // Overwrite previous entry so that undo will remove whole word
+                _this._history.stack[_this._history.offset] = _extends(
+                  {},
+                  record,
+                  { timestamp: timestamp }
+                )
+
+                return
+              }
+            }
+          }
+
+          // Add the new operation to the stack
+          _this._history.stack.push(
+            _extends({}, record, { timestamp: timestamp })
+          )
+          _this._history.offset++
+        }),
+        (_this._updateInput = function(record) {
+          var input = _this._input
+
+          if (!input) return
+
+          // Update values and selection state
+          input.value = record.value
+          input.selectionStart = record.selectionStart
+          input.selectionEnd = record.selectionEnd
+
+          _this.props.onValueChange(record.value)
+        }),
+        (_this._applyEdits = function(record) {
+          // Save last selection state
+          var input = _this._input
           var last = _this._history.stack[_this._history.offset]
 
-          if (last && timestamp - last.timestamp < HISTORY_TIME_GAP) {
-            // A previous entry exists and was in short interval
+          if (last && input) {
+            _this._history.stack[_this._history.offset] = _extends({}, last, {
+              selectionStart: input.selectionStart,
+              selectionEnd: input.selectionEnd,
+            })
+          }
 
-            // Match the last word in the line
-            var re = /[^a-z0-9]([a-z0-9]+)$/i
+          // Save the changes
+          _this._recordChange(record)
+          _this._updateInput(record)
+        }),
+        (_this._undoEdit = function() {
+          var _this$_history2 = _this._history,
+            stack = _this$_history2.stack,
+            offset = _this$_history2.offset
 
-            // Get the previous line
-            var previous = _this
-              ._getLines(last.value, last.selectionStart)
-              .pop()
-              .match(re)
+          // Get the previous edit
 
-            // Get the current line
-            var current = _this
-              ._getLines(record.value, record.selectionStart)
-              .pop()
-              .match(re)
+          var record = stack[offset - 1]
 
-            if (previous && current && current[1].startsWith(previous[1])) {
-              // The last word of the previous line and current line match
-              // Overwrite previous entry so that undo will remove whole word
-              _this._history.stack[_this._history.offset] = _extends(
-                {},
-                record,
-                { timestamp: timestamp }
-              )
+          if (record) {
+            // Apply the changes and update the offset
+            _this._updateInput(record)
+            _this._history.offset = Math.max(offset - 1, 0)
+          }
+        }),
+        (_this._redoEdit = function() {
+          var _this$_history3 = _this._history,
+            stack = _this$_history3.stack,
+            offset = _this$_history3.offset
 
+          // Get the next edit
+
+          var record = stack[offset + 1]
+
+          if (record) {
+            // Apply the changes and update the offset
+            _this._updateInput(record)
+            _this._history.offset = Math.min(offset + 1, stack.length - 1)
+          }
+        }),
+        (_this._handleKeyDown = function(e) {
+          var _this$props = _this.props,
+            tabSize = _this$props.tabSize,
+            insertSpaces = _this$props.insertSpaces,
+            ignoreTabKey = _this$props.ignoreTabKey,
+            onKeyDown = _this$props.onKeyDown
+
+          if (onKeyDown) {
+            onKeyDown(e)
+
+            if (e.defaultPrevented) {
               return
             }
           }
-        }
 
-        // Add the new operation to the stack
-        _this._history.stack.push(
-          _extends({}, record, { timestamp: timestamp })
-        )
-        _this._history.offset++
-      }),
-      (_this._updateInput = function(record) {
-        var input = _this._input
+          var _e$target = e.target,
+            value = _e$target.value,
+            selectionStart = _e$target.selectionStart,
+            selectionEnd = _e$target.selectionEnd
 
-        if (!input) return
+          var tabCharacter = (insertSpaces ? ' ' : '     ').repeat(tabSize)
 
-        // Update values and selection state
-        input.value = record.value
-        input.selectionStart = record.selectionStart
-        input.selectionEnd = record.selectionEnd
+          if (
+            e.keyCode === KEYCODE_TAB &&
+            !ignoreTabKey &&
+            _this.state.capture
+          ) {
+            // Prevent focus change
+            e.preventDefault()
 
-        _this.props.onValueChange(record.value)
-      }),
-      (_this._applyEdits = function(record) {
-        // Save last selection state
-        var input = _this._input
-        var last = _this._history.stack[_this._history.offset]
-
-        if (last && input) {
-          _this._history.stack[_this._history.offset] = _extends({}, last, {
-            selectionStart: input.selectionStart,
-            selectionEnd: input.selectionEnd,
-          })
-        }
-
-        // Save the changes
-        _this._recordChange(record)
-        _this._updateInput(record)
-      }),
-      (_this._undoEdit = function() {
-        var _this$_history2 = _this._history,
-          stack = _this$_history2.stack,
-          offset = _this$_history2.offset
-
-        // Get the previous edit
-
-        var record = stack[offset - 1]
-
-        if (record) {
-          // Apply the changes and update the offset
-          _this._updateInput(record)
-          _this._history.offset = Math.max(offset - 1, 0)
-        }
-      }),
-      (_this._redoEdit = function() {
-        var _this$_history3 = _this._history,
-          stack = _this$_history3.stack,
-          offset = _this$_history3.offset
-
-        // Get the next edit
-
-        var record = stack[offset + 1]
-
-        if (record) {
-          // Apply the changes and update the offset
-          _this._updateInput(record)
-          _this._history.offset = Math.min(offset + 1, stack.length - 1)
-        }
-      }),
-      (_this._handleKeyDown = function(e) {
-        var _this$props = _this.props,
-          tabSize = _this$props.tabSize,
-          insertSpaces = _this$props.insertSpaces,
-          ignoreTabKey = _this$props.ignoreTabKey,
-          onKeyDown = _this$props.onKeyDown
-
-        if (onKeyDown) {
-          onKeyDown(e)
-
-          if (e.defaultPrevented) {
-            return
-          }
-        }
-
-        var _e$target = e.target,
-          value = _e$target.value,
-          selectionStart = _e$target.selectionStart,
-          selectionEnd = _e$target.selectionEnd
-
-        var tabCharacter = (insertSpaces ? ' ' : '     ').repeat(tabSize)
-
-        if (e.keyCode === KEYCODE_TAB && !ignoreTabKey && _this.state.capture) {
-          // Prevent focus change
-          e.preventDefault()
-
-          if (e.shiftKey) {
-            // Unindent selected lines
-            var linesBeforeCaret = _this._getLines(value, selectionStart)
-            var startLine = linesBeforeCaret.length - 1
-            var endLine = _this._getLines(value, selectionEnd).length - 1
-            var nextValue = value
-              .split('\n')
-              .map(function(line, i) {
-                if (
-                  i >= startLine &&
-                  i <= endLine &&
-                  line.startsWith(tabCharacter)
-                ) {
-                  return line.substring(tabCharacter.length)
-                }
-
-                return line
-              })
-              .join('\n')
-
-            if (value !== nextValue) {
-              var startLineText = linesBeforeCaret[startLine]
-
-              _this._applyEdits({
-                value: nextValue,
-                // Move the start cursor if first line in selection was modified
-                // It was modified only if it started with a tab
-                selectionStart: startLineText.startsWith(tabCharacter)
-                  ? selectionStart - tabCharacter.length
-                  : selectionStart,
-                // Move the end cursor by total number of characters removed
-                selectionEnd: selectionEnd - (value.length - nextValue.length),
-              })
-            }
-          } else if (selectionStart !== selectionEnd) {
-            // Indent selected lines
-            var _linesBeforeCaret = _this._getLines(value, selectionStart)
-            var _startLine = _linesBeforeCaret.length - 1
-            var _endLine = _this._getLines(value, selectionEnd).length - 1
-            var _startLineText = _linesBeforeCaret[_startLine]
-
-            _this._applyEdits({
-              value: value
+            if (e.shiftKey) {
+              // Unindent selected lines
+              var linesBeforeCaret = _this._getLines(value, selectionStart)
+              var startLine = linesBeforeCaret.length - 1
+              var endLine = _this._getLines(value, selectionEnd).length - 1
+              var nextValue = value
                 .split('\n')
                 .map(function(line, i) {
-                  if (i >= _startLine && i <= _endLine) {
-                    return tabCharacter + line
+                  if (
+                    i >= startLine &&
+                    i <= endLine &&
+                    line.startsWith(tabCharacter)
+                  ) {
+                    return line.substring(tabCharacter.length)
                   }
 
                   return line
                 })
-                .join('\n'),
-              // Move the start cursor by number of characters added in first line of selection
-              // Don't move it if it there was no text before cursor
-              selectionStart: /\S/.test(_startLineText)
-                ? selectionStart + tabCharacter.length
-                : selectionStart,
-              // Move the end cursor by total number of characters added
-              selectionEnd:
-                selectionEnd +
-                tabCharacter.length * (_endLine - _startLine + 1),
-            })
-          } else {
-            var updatedSelection = selectionStart + tabCharacter.length
+                .join('\n')
 
-            _this._applyEdits({
-              // Insert tab character at caret
-              value:
-                value.substring(0, selectionStart) +
-                tabCharacter +
-                value.substring(selectionEnd),
-              // Update caret position
-              selectionStart: updatedSelection,
-              selectionEnd: updatedSelection,
-            })
-          }
-        } else if (e.keyCode === KEYCODE_BACKSPACE) {
-          var hasSelection = selectionStart !== selectionEnd
-          var textBeforeCaret = value.substring(0, selectionStart)
+              if (value !== nextValue) {
+                var startLineText = linesBeforeCaret[startLine]
 
-          if (textBeforeCaret.endsWith(tabCharacter) && !hasSelection) {
-            // Prevent default delete behaviour
-            e.preventDefault()
-
-            var _updatedSelection = selectionStart - tabCharacter.length
-
-            _this._applyEdits({
-              // Remove tab character at caret
-              value:
-                value.substring(0, selectionStart - tabCharacter.length) +
-                value.substring(selectionEnd),
-              // Update caret position
-              selectionStart: _updatedSelection,
-              selectionEnd: _updatedSelection,
-            })
-          }
-        } else if (e.keyCode === KEYCODE_ENTER) {
-          // Ignore selections
-          if (selectionStart === selectionEnd) {
-            // Get the current line
-            var line = _this._getLines(value, selectionStart).pop()
-            var matches = line.match(/^\s+/)
-
-            if (matches && matches[0]) {
-              e.preventDefault()
-
-              // Preserve indentation on inserting a new line
-              var indent = '\n' + matches[0]
-              var _updatedSelection2 = selectionStart + indent.length
+                _this._applyEdits({
+                  value: nextValue,
+                  // Move the start cursor if first line in selection was modified
+                  // It was modified only if it started with a tab
+                  selectionStart: startLineText.startsWith(tabCharacter)
+                    ? selectionStart - tabCharacter.length
+                    : selectionStart,
+                  // Move the end cursor by total number of characters removed
+                  selectionEnd:
+                    selectionEnd - (value.length - nextValue.length),
+                })
+              }
+            } else if (selectionStart !== selectionEnd) {
+              // Indent selected lines
+              var _linesBeforeCaret = _this._getLines(value, selectionStart)
+              var _startLine = _linesBeforeCaret.length - 1
+              var _endLine = _this._getLines(value, selectionEnd).length - 1
+              var _startLineText = _linesBeforeCaret[_startLine]
 
               _this._applyEdits({
-                // Insert indentation character at caret
+                value: value
+                  .split('\n')
+                  .map(function(line, i) {
+                    if (i >= _startLine && i <= _endLine) {
+                      return tabCharacter + line
+                    }
+
+                    return line
+                  })
+                  .join('\n'),
+                // Move the start cursor by number of characters added in first line of selection
+                // Don't move it if it there was no text before cursor
+                selectionStart: /\S/.test(_startLineText)
+                  ? selectionStart + tabCharacter.length
+                  : selectionStart,
+                // Move the end cursor by total number of characters added
+                selectionEnd:
+                  selectionEnd +
+                  tabCharacter.length * (_endLine - _startLine + 1),
+              })
+            } else {
+              var updatedSelection = selectionStart + tabCharacter.length
+
+              _this._applyEdits({
+                // Insert tab character at caret
                 value:
                   value.substring(0, selectionStart) +
-                  indent +
+                  tabCharacter +
                   value.substring(selectionEnd),
                 // Update caret position
-                selectionStart: _updatedSelection2,
-                selectionEnd: _updatedSelection2,
+                selectionStart: updatedSelection,
+                selectionEnd: updatedSelection,
               })
             }
-          }
-        } else if (
-          e.keyCode === KEYCODE_PARENS ||
-          e.keyCode === KEYCODE_BRACKETS ||
-          e.keyCode === KEYCODE_QUOTE ||
-          e.keyCode === KEYCODE_BACK_QUOTE
-        ) {
-          var chars = void 0
+          } else if (e.keyCode === KEYCODE_BACKSPACE) {
+            var hasSelection = selectionStart !== selectionEnd
+            var textBeforeCaret = value.substring(0, selectionStart)
 
-          if (e.keyCode === KEYCODE_PARENS && e.shiftKey) {
-            chars = ['(', ')']
-          } else if (e.keyCode === KEYCODE_BRACKETS) {
-            if (e.shiftKey) {
-              chars = ['{', '}']
-            } else {
-              chars = ['[', ']']
-            }
-          } else if (e.keyCode === KEYCODE_QUOTE) {
-            if (e.shiftKey) {
-              chars = ['"', '"']
-            } else {
-              chars = ["'", "'"]
-            }
-          } else if (e.keyCode === KEYCODE_BACK_QUOTE && !e.shiftKey) {
-            chars = ['`', '`']
-          }
+            if (textBeforeCaret.endsWith(tabCharacter) && !hasSelection) {
+              // Prevent default delete behaviour
+              e.preventDefault()
 
-          // If text is selected, wrap them in the characters
-          if (selectionStart !== selectionEnd && chars) {
+              var _updatedSelection = selectionStart - tabCharacter.length
+
+              _this._applyEdits({
+                // Remove tab character at caret
+                value:
+                  value.substring(0, selectionStart - tabCharacter.length) +
+                  value.substring(selectionEnd),
+                // Update caret position
+                selectionStart: _updatedSelection,
+                selectionEnd: _updatedSelection,
+              })
+            }
+          } else if (e.keyCode === KEYCODE_ENTER) {
+            // Ignore selections
+            if (selectionStart === selectionEnd) {
+              // Get the current line
+              var line = _this._getLines(value, selectionStart).pop()
+              var matches = line.match(/^\s+/)
+
+              if (matches && matches[0]) {
+                e.preventDefault()
+
+                // Preserve indentation on inserting a new line
+                var indent = '\n' + matches[0]
+                var _updatedSelection2 = selectionStart + indent.length
+
+                _this._applyEdits({
+                  // Insert indentation character at caret
+                  value:
+                    value.substring(0, selectionStart) +
+                    indent +
+                    value.substring(selectionEnd),
+                  // Update caret position
+                  selectionStart: _updatedSelection2,
+                  selectionEnd: _updatedSelection2,
+                })
+              }
+            }
+          } else if (
+            e.keyCode === KEYCODE_PARENS ||
+            e.keyCode === KEYCODE_BRACKETS ||
+            e.keyCode === KEYCODE_QUOTE ||
+            e.keyCode === KEYCODE_BACK_QUOTE
+          ) {
+            var chars = void 0
+
+            if (e.keyCode === KEYCODE_PARENS && e.shiftKey) {
+              chars = ['(', ')']
+            } else if (e.keyCode === KEYCODE_BRACKETS) {
+              if (e.shiftKey) {
+                chars = ['{', '}']
+              } else {
+                chars = ['[', ']']
+              }
+            } else if (e.keyCode === KEYCODE_QUOTE) {
+              if (e.shiftKey) {
+                chars = ['"', '"']
+              } else {
+                chars = ["'", "'"]
+              }
+            } else if (e.keyCode === KEYCODE_BACK_QUOTE && !e.shiftKey) {
+              chars = ['`', '`']
+            }
+
+            // If text is selected, wrap them in the characters
+            if (selectionStart !== selectionEnd && chars) {
+              e.preventDefault()
+
+              _this._applyEdits({
+                value:
+                  value.substring(0, selectionStart) +
+                  chars[0] +
+                  value.substring(selectionStart, selectionEnd) +
+                  chars[1] +
+                  value.substring(selectionEnd),
+                // Update caret position
+                selectionStart: selectionStart,
+                selectionEnd: selectionEnd + 2,
+              })
+            }
+          } else if (
+            (isMacLike // Trigger undo with ⌘+Z on Mac
+              ? e.metaKey && e.keyCode === KEYCODE_Z // Trigger undo with Ctrl+Z on other platforms
+              : e.ctrlKey && e.keyCode === KEYCODE_Z) &&
+            !e.shiftKey &&
+            !e.altKey
+          ) {
             e.preventDefault()
 
-            _this._applyEdits({
-              value:
-                value.substring(0, selectionStart) +
-                chars[0] +
-                value.substring(selectionStart, selectionEnd) +
-                chars[1] +
-                value.substring(selectionEnd),
-              // Update caret position
-              selectionStart: selectionStart,
-              selectionEnd: selectionEnd + 2,
+            _this._undoEdit()
+          } else if (
+            (isMacLike // Trigger redo with ⌘+Shift+Z on Mac
+              ? e.metaKey && e.keyCode === KEYCODE_Z && e.shiftKey
+              : isWindows // Trigger redo with Ctrl+Y on Windows
+              ? e.ctrlKey && e.keyCode === KEYCODE_Y // Trigger redo with Ctrl+Shift+Z on other platforms
+              : e.ctrlKey && e.keyCode === KEYCODE_Z && e.shiftKey) &&
+            !e.altKey
+          ) {
+            e.preventDefault()
+
+            _this._redoEdit()
+          } else if (
+            e.keyCode === KEYCODE_M &&
+            e.ctrlKey &&
+            (isMacLike ? e.shiftKey : true)
+          ) {
+            e.preventDefault()
+
+            // Toggle capturing tab key so users can focus away
+            _this.setState(function(state) {
+              return {
+                capture: !state.capture,
+              }
             })
           }
-        } else if (
-          (isMacLike // Trigger undo with ⌘+Z on Mac
-            ? e.metaKey && e.keyCode === KEYCODE_Z // Trigger undo with Ctrl+Z on other platforms
-            : e.ctrlKey && e.keyCode === KEYCODE_Z) &&
-          !e.shiftKey &&
-          !e.altKey
-        ) {
-          e.preventDefault()
+        }),
+        (_this._handleChange = function(e) {
+          var _e$target2 = e.target,
+            value = _e$target2.value,
+            selectionStart = _e$target2.selectionStart,
+            selectionEnd = _e$target2.selectionEnd
 
-          _this._undoEdit()
-        } else if (
-          (isMacLike // Trigger redo with ⌘+Shift+Z on Mac
-            ? e.metaKey && e.keyCode === KEYCODE_Z && e.shiftKey
-            : isWindows // Trigger redo with Ctrl+Y on Windows
-            ? e.ctrlKey && e.keyCode === KEYCODE_Y // Trigger redo with Ctrl+Shift+Z on other platforms
-            : e.ctrlKey && e.keyCode === KEYCODE_Z && e.shiftKey) &&
-          !e.altKey
-        ) {
-          e.preventDefault()
+          _this._recordChange(
+            {
+              value: value,
+              selectionStart: selectionStart,
+              selectionEnd: selectionEnd,
+            },
+            true
+          )
 
-          _this._redoEdit()
-        } else if (
-          e.keyCode === KEYCODE_M &&
-          e.ctrlKey &&
-          (isMacLike ? e.shiftKey : true)
-        ) {
-          e.preventDefault()
-
-          // Toggle capturing tab key so users can focus away
-          _this.setState(function(state) {
-            return {
-              capture: !state.capture,
-            }
-          })
-        }
-      }),
-      (_this._handleChange = function(e) {
-        var _e$target2 = e.target,
-          value = _e$target2.value,
-          selectionStart = _e$target2.selectionStart,
-          selectionEnd = _e$target2.selectionEnd
-
-        _this._recordChange(
-          {
-            value: value,
-            selectionStart: selectionStart,
-            selectionEnd: selectionEnd,
-          },
-          true
-        )
-
-        _this.props.onValueChange(value)
-      }),
-      (_this._history = {
-        stack: [],
-        offset: -1,
-      }),
-      _temp)),
+          _this.props.onValueChange(value)
+        }),
+        (_this._history = {
+          stack: [],
+          offset: -1,
+        }),
+        _temp)),
       _possibleConstructorReturn(_this, _ret)
     )
   }
@@ -614,7 +627,7 @@ var Editor = (function(_React$Component) {
             className: className,
             id: textareaId,
             value: value,
-            onChange: this._handleChange,
+            onInput: this._handleChange,
             onKeyDown: this._handleKeyDown,
             onClick: onClick,
             onKeyUp: onKeyUp,

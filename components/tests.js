@@ -1,9 +1,12 @@
+import { h } from 'https://cdn.pika.dev/preact@10.3.3'
+import htm from 'https://cdn.pika.dev/htm@3.0.3'
+import css from 'https://cdn.pika.dev/csz@1.2.0'
 import { CopyIcon, CloseIcon } from './icons.js'
 import Editor from './editor.js'
+
+const html = htm.bind(h)
 const { highlight, languages } = Prism
-
 const round = num => parseFloat(num).toFixed(0)
-
 const insert = (arr, index, newItem) => [
   ...arr.slice(0, index),
   newItem,
