@@ -61,13 +61,13 @@ const Bar = tests => (test, i) => {
           style=${{
             width: '3px',
             transition: 'height 0.3s',
-            height: `${test.error ? 100 : percent}%`,
-            background: test.error ? 'crimson' : 'rgba(255,255,255,0.4)',
+            height: `${test.ops === -1 ? 100 : percent}%`,
+            background: test.ops === -1 ? 'crimson' : 'rgba(255,255,255,0.4)',
           }}
         ></span>
       </div>
       <div className=${style.label}>
-        ${percent.toFixed(0)}%
+        ${test.ops === -1 ? 0 : percent << 0}%
       </div>
     </div>
   `
