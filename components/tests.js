@@ -64,7 +64,7 @@ export const TestControls = ({ id, test, tests, dispatch }) => {
   return html`
     <div className="test__controls">
       <p>
-        ${test.error ? 'Failed' : `${round(test.median * 1000 || 0)} μs`}
+        ${test.error ? 'Failed' : `${test.ops * 100}`} ops/s
       </p>
       <button
         className=${style.button}
@@ -94,7 +94,7 @@ export default ({ state, dispatch }) => {
             className=${style.start}
             onClick=${_ => {
               dispatch({
-                tests: tests.map(test => ({ ...test, median: 0 })),
+                tests: tests.map(test => ({ ...test, ops: 0 })),
                 started: true,
               })
             }}
@@ -116,7 +116,7 @@ export default ({ state, dispatch }) => {
           <button
             className=${style.add}
             onClick=${e =>
-              dispatch({ tests: [{ code: '', median: 0 }, ...tests] })}
+              dispatch({ tests: [{ code: '', ops: 0 }, ...tests] })}
           >
             Add Case
           </button>

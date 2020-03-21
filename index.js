@@ -14,6 +14,8 @@ import Tests from '../../components/tests.js'
 import Results from '../../components/results.js'
 
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
+const mean = arr => arr.reduce((p, c) => p + c, 0) / arr.length
+
 const init = location.hash
   ? {
       started: true,
@@ -37,24 +39,80 @@ const reducer = (state, update) => ({
   ...(typeof update === 'function' ? update(state) : update),
 })
 
+const pReduce = (iterable, reducer, initialValue) =>
+  new Promise((resolve, reject) => {
+    const iterator = iterable[Symbol.iterator]()
+    let index = 0
+
+    const next = async total => {
+      const element = iterator.next()
+
+      if (element.done) {
+        resolve(total)
+        return
+      }
+
+      try {
+        const value = await Promise.all([total, element.value])
+        next(reducer(value[0], value[1], index++))
+      } catch (error) {
+        reject(error)
+      }
+    }
+
+    next(initialValue)
+  })
+
+const pSeries = async tasks => {
+  const results = []
+
+  await pReduce(tasks, async (_, task) => {
+    const value = await task()
+    results.push(value)
+  })
+
+  return results
+}
+
+function average(arr) {
+  var sums = {},
+    counts = {},
+    results = [],
+    name
+  for (var i = 0; i < arr.length; i++) {
+    name = arr[i].code
+    if (!(name in sums)) {
+      sums[name] = 0
+      counts[name] = 0
+    }
+    sums[name] += arr[i].ops
+    counts[name]++
+  }
+
+  for (name in sums) {
+    results.push({ code: name, ops: (sums[name] / counts[name]) << 0 })
+  }
+  return results
+}
+
 const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
   const { before, started, tests, dialog } = state
 
   useEffect(() => {
     if (started) {
-      Promise.all(
-        tests.map(
-          test =>
+      const tasks = () => () =>
+        pSeries(
+          tests.map(test => () =>
             new Promise((resolve, reject) => {
               var worker = new Worker('/run.js')
               worker.postMessage([before, test])
               worker.onmessage = e => resolve(e.data)
             })
+          )
         )
-      ).then(results => {
-        console.log('done', results)
-        dispatch({ tests: results, started: false })
+      pSeries(Array.from({ length: 10 }, tasks)).then(results => {
+        dispatch({ tests: average(results.flat()), started: false })
       })
     }
   }, [started, tests])
