@@ -26,10 +26,18 @@ const style = {
   add: css`
     color: orange;
     border: 1px solid orange;
+    &:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
   `,
   start: css`
     color: lightblue;
     border: 1px solid lightblue;
+    &:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
   `,
   controls: css`
     position: absolute;
@@ -42,29 +50,66 @@ const style = {
     padding: 0;
     border: 0;
   `,
+  spinner: css`
+    width: 1.38rem;
+    opacity: 0.5;
+  `,
 }
 
-function debounce(func, wait, immediate) {
-  var timeout
-  return function() {
-    var context = this,
-      args = arguments
-    var later = function() {
-      timeout = null
-      if (!immediate) func.apply(context, args)
-    }
-    var callNow = immediate && !timeout
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-    if (callNow) func.apply(context, args)
+function commaFormatted(amount) {
+  var delimiter = ',' // replace comma if desired
+  var a = amount.split('.', 2)
+  var d = a[1]
+  var i = parseInt(a[0])
+  if (isNaN(i)) {
+    return ''
   }
+  var minus = ''
+  if (i < 0) {
+    minus = '-'
+  }
+  i = Math.abs(i)
+  var n = new String(i)
+  var a = []
+  while (n.length > 3) {
+    var nn = n.substr(n.length - 3)
+    a.unshift(nn)
+    n = n.substr(0, n.length - 3)
+  }
+  if (n.length > 0) {
+    a.unshift(n)
+  }
+  n = a.join(delimiter)
+  if (d.length < 1) {
+    amount = n
+  } else {
+    amount = n + '.' + d
+  }
+  amount = minus + amount
+  return amount
 }
 
-export const TestControls = ({ id, test, tests, dispatch }) => {
+export const TestControls = ({
+  id,
+  test,
+  tests,
+  runs,
+  duration,
+  progress,
+  dispatch,
+}) => {
   return html`
     <div className="test__controls">
       <p>
-        ${test.error ? 'Failed' : `${test.ops * 100}`} ops/s
+        ${test.ops === -2
+          ? 'Untested'
+          : test.ops === -1
+          ? 'Failed'
+          : test.ops === 0
+          ? `Testing ${((progress / (tests.length * runs)) * 100) << 0}%`
+          : `${Number(test.ops * (1000 / duration)).toLocaleString(
+              'en'
+            )} ops/s`}
       </p>
       <button
         className=${style.button}
@@ -84,18 +129,20 @@ export const TestControls = ({ id, test, tests, dispatch }) => {
 
 let debouncedSetStart
 export default ({ state, dispatch }) => {
-  const { before, tests } = state
+  const { before, tests, runs, duration, progress } = state
   return html`
     <article className="tests">
       <div className="tests__header">
         <h3>Setup Code</h3>
         <div>
           <button
+            disabled=${state.started}
             className=${style.start}
             onClick=${_ => {
               dispatch({
                 tests: tests.map(test => ({ ...test, ops: 0 })),
                 started: true,
+                progress: 0,
               })
             }}
           >
@@ -115,8 +162,9 @@ export default ({ state, dispatch }) => {
         <div>
           <button
             className=${style.add}
+            disabled=${state.started}
             onClick=${e =>
-              dispatch({ tests: [{ code: '', ops: 0 }, ...tests] })}
+              dispatch({ tests: [{ code: '', ops: -2 }, ...tests] })}
           >
             Add Case
           </button>
@@ -145,6 +193,9 @@ export default ({ state, dispatch }) => {
                 id=${id}
                 tests=${tests}
                 test=${test}
+                runs=${runs}
+                duration=${duration}
+                progress=${progress}
                 dispatch=${dispatch}
               />
             </li>

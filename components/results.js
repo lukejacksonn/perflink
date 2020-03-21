@@ -23,7 +23,6 @@ const style = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
   `,
   bar: css`
     display: flex;
@@ -49,9 +48,14 @@ const style = {
     font-weight: 200;
     padding: 0 0 3rem;
   `,
+  spinner: css`
+    width: 1rem;
+    opacity: 0.5;
+  `,
 }
 
 const Bar = tests => (test, i) => {
+  console.log(test)
   const max = Math.max(...tests.map(x => x.ops))
   const percent = test.ops ? (test.ops / max) * 100 : 0
   return html`
@@ -61,13 +65,19 @@ const Bar = tests => (test, i) => {
           style=${{
             width: '3px',
             transition: 'height 0.3s',
-            height: `${test.ops === -1 ? 100 : percent}%`,
+            height: `${test.ops === -1 ? 100 : test.ops === -2 ? 0 : percent}%`,
             background: test.ops === -1 ? 'crimson' : 'rgba(255,255,255,0.4)',
           }}
         ></span>
       </div>
       <div className=${style.label}>
-        ${test.ops === -1 ? 0 : percent << 0}%
+        ${test.ops === -1 || test.ops === -2
+          ? 0
+          : test.ops === 0
+          ? html`
+              <img className=${style.spinner} src="/spinner.gif" />
+            `
+          : `${percent << 0}%`}
       </div>
     </div>
   `
@@ -77,7 +87,7 @@ export default ({ state }) => {
   const { tests } = state
   return html`
     <aside className="graph">
-      ${tests.map(Bar(tests))}
+      ${tests.filter(x => x.ops !== -2).map(Bar(tests))}
     </aside>
   `
 }
