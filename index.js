@@ -16,23 +16,28 @@ import Results from '../../components/results.js'
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
 const mean = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 
+const defaults = {
+  started: false,
+  dialog: true,
+  before: `const data = [...Array(8000).keys()]`,
+  runs: 10,
+  duration: 100,
+  progress: 0,
+  tests: [
+    { code: 'data.find(x => x == 2000)', ops: 0 },
+    { code: 'data.find(x => x == 4000)', ops: 0 },
+    { code: 'data.find(x => x == 8000)', ops: 0 },
+  ],
+}
+
 const init = location.hash
   ? {
-      started: true,
+      ...defaults,
       dialog: false,
       before: atob(location.hash.slice(1).split('/')[0]),
       tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
     }
-  : {
-      started: false,
-      dialog: true,
-      before: `const data = [...Array(10000).keys()]`,
-      tests: [
-        { code: '' },
-        { code: 'data.find(x => x == 5000)' },
-        { code: 'data.find(x => x == 10000)' },
-      ],
-    }
+  : defaults
 
 const reducer = (state, update) => ({
   ...state,
@@ -97,7 +102,7 @@ function average(arr) {
 
 const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
-  const { before, started, tests, dialog } = state
+  const { before, started, tests, dialog, runs, duration } = state
 
   useEffect(() => {
     if (started) {
@@ -106,12 +111,15 @@ const app = () => {
           tests.map(test => () =>
             new Promise((resolve, reject) => {
               var worker = new Worker('/run.js')
-              worker.postMessage([before, test])
-              worker.onmessage = e => resolve(e.data)
+              worker.postMessage([before, test, duration])
+              worker.onmessage = e => {
+                dispatch(state => ({ progress: state.progress + 1 }))
+                resolve(e.data)
+              }
             })
           )
         )
-      pSeries(Array.from({ length: 10 }, tasks)).then(results => {
+      pSeries(Array.from({ length: runs }, tasks)).then(results => {
         dispatch({ tests: average(results.flat()), started: false })
       })
     }
@@ -157,33 +165,3 @@ render(
   `,
   document.body
 )
-
-// import htm from 'https://unpkg.com/htm@2.1.1/dist/htm.mjs'
-// import csz from 'https://unpkg.com/csz@0.1.2/index.js'
-
-// import(location.hostname === 'localhost'
-//   ? 'https://unpkg.com/es-react@16.8.30/index.js'
-//   : 'https://unpkg.com/es-react-production@16.8.30/index.js').then(app)
-
-// function app({ React, ReactDOM }) {
-//   window.React = React
-//   window.css = csz
-//   window.html = htm.bind(React.createElement)
-
-//   const Fallback = html`
-//     <div></div>
-//   `
-//   const Route = {
-//     '/': React.lazy(() => import('./routes/home/index.js')),
-//     '*': React.lazy(() => import('./routes/notfound/index.js')),
-//   }
-
-//   ReactDOM.render(
-//     html`
-//       <${React.Suspense} fallback=${Fallback}>
-//         <${Route[location.pathname] || Route['*']} />
-//       <//>
-//     `,
-//     document.body
-//   )
-// }

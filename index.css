@@ -123,6 +123,14 @@ button:hover {
   padding: 1.3rem 1rem 1rem;
 }
 
+.test__controls p {
+  display: block;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.38rem;
+  border-radius: 0.38rem;
+}
+
 /* Media queries
 ------------------------------------------------------------------------------*/
 
