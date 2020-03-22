@@ -139,6 +139,26 @@ const app = () => {
     )
   }, [tests])
 
+  useEffect(() => {
+    addEventListener(
+      'keydown',
+      e => {
+        if (
+          (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) &&
+          e.keyCode == 83
+        ) {
+          e.preventDefault()
+          dispatch(state => ({
+            tests: state.tests.map(test => ({ ...test, ops: 0 })),
+            started: true,
+            progress: 0,
+          }))
+        }
+      },
+      false
+    )
+  }, [])
+
   return html`
     <main className="app">
       <${Tests} state=${state} dispatch=${dispatch} />
