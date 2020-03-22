@@ -24,7 +24,7 @@ const style = {
   },
   add: css`
     color: orange;
-    border: 1px solid orange;
+    border: 2px solid orange;
     &:disabled {
       opacity: 0.5;
       cursor: wait;
@@ -32,7 +32,7 @@ const style = {
   `,
   start: css`
     color: lightblue;
-    border: 1px solid lightblue;
+    border: 2px solid lightblue;
     &:disabled {
       opacity: 0.5;
       cursor: wait;
@@ -71,12 +71,21 @@ const style = {
     width: 1.62rem;
     height: 1.62rem;
     flex: none;
-    background: rgba(0, 0, 0, 0.38);
+    background: rgba(0, 0, 0, 0.2);
     color: rgba(255, 255, 255, 0.62);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+  `,
+  cmds: css`
+    margin-left: auto;
+    margin-right: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.38rem 0.62rem;
+    border-radius: 0.38rem;
+    font-weight: lighter;
   `,
 }
 
@@ -170,6 +179,9 @@ export default ({ state, dispatch }) => {
     <article className="tests">
       <div className="tests__header">
         <h3>Setup Code</h3>
+        <b className=${style.cmds}>
+          ${navigator.platform.match('Mac') ? 'cmd+s' : 'ctrl+s'}
+        </b>
         <div>
           <button
             disabled=${state.started}

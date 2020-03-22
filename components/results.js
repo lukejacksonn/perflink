@@ -34,7 +34,7 @@ const style = {
   `,
   label: css`
     width: 3rem;
-    margin-top: 1rem;
+    margin-top: 0.62rem;
     height: 1rem;
     text-align: center;
     font-weight: 100;
@@ -55,18 +55,20 @@ const style = {
     opacity: 0.5;
   `,
   id: css`
-    width: 1.62rem;
-    height: 1.62rem;
+    width: 2rem;
+    height: 2rem;
     flex: none;
-    background: rgba(0, 0, 0, 0.38);
+    background: rgba(0, 0, 0, 0.2);
     color: rgba(255, 255, 255, 0.62);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 0.62rem;
   `,
 }
+
+const getColor = value => `hsl(${(value * 120).toString(10)},62%,50%)`
 
 const Bar = tests => (test, i) => {
   const max = Math.max(...tests.map(x => x.ops))
@@ -77,9 +79,9 @@ const Bar = tests => (test, i) => {
         <span
           style=${{
             width: '3px',
-            transition: 'height 0.3s',
+            transition: 'height 0.3s, background 0.3s',
             height: `${test.ops === -1 ? 100 : test.ops === -2 ? 0 : percent}%`,
-            background: test.ops === -1 ? 'crimson' : 'rgba(255,255,255,0.4)',
+            background: test.ops === -1 ? getColor(0) : getColor(percent / 100),
           }}
         ></span>
       </div>
