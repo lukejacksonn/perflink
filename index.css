@@ -5,6 +5,10 @@
   padding: 0;
 }
 
+html {
+  font-size: calc(10px + 0.38vw);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -67,8 +71,7 @@ button:hover {
 
 .tests {
   grid-area: tests;
-
-  padding: 3rem;
+  padding: 2.38rem 2rem;
   background: #2f3138;
   color: rgba(255, 255, 255, 0.62);
   max-height: 100vh;
@@ -154,15 +157,6 @@ button:hover {
 
   .graph {
     max-width: 50vw;
-  }
-}
-
-@media (max-width: 480px) {
-  html {
-    font-size: 13px;
-  }
-  .tests {
-    padding: 2rem 1.38rem;
   }
 }
 
