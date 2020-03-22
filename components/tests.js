@@ -48,6 +48,9 @@ const style = {
   button: css`
     padding: 0;
     border: 0;
+    &:disabled {
+      opacity: 0.5;
+    }
   `,
   spinner: css`
     width: 1.38rem;
@@ -122,15 +125,8 @@ function commaFormatted(amount) {
   return amount
 }
 
-export const TestControls = ({
-  id,
-  test,
-  tests,
-  runs,
-  duration,
-  progress,
-  dispatch,
-}) => {
+export const TestControls = ({ id, test, state, dispatch }) => {
+  const { tests, runs, duration, progress, started } = state
   return html`
     <div className="test__controls">
       <small className=${style.id}>${id + 1}</small>
@@ -152,17 +148,19 @@ export const TestControls = ({
           ? 'Failed'
           : test.ops === 0
           ? `Testing ${((progress / (tests.length * runs)) * 100) << 0}%`
-          : `${Number(test.ops * (1000 / duration)).toLocaleString(
+          : `${Number((test.ops * (1000 / duration)) << 0).toLocaleString(
               'en'
             )} ops/s`}
       </p>
       <button
+        disabled=${started}
         className=${style.button}
         onClick=${e => dispatch({ tests: insert(tests, id, tests[id]) })}
       >
         <${CopyIcon} />
       </button>
       <button
+        disabled=${started}
         className=${style.button}
         onClick=${e => dispatch({ tests: tests.filter((_, y) => y !== id) })}
       >
@@ -224,11 +222,8 @@ export default ({ state, dispatch }) => {
             <li key=${id} className="test">
               <${TestControls}
                 id=${id}
-                tests=${tests}
                 test=${test}
-                runs=${runs}
-                duration=${duration}
-                progress=${progress}
+                state=${state}
                 dispatch=${dispatch}
               />
               <div className="test__editor">

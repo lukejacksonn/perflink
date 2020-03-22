@@ -20,8 +20,8 @@ const defaults = {
   started: false,
   dialog: true,
   before: `const data = [...Array(8000).keys()]`,
-  runs: 10,
-  duration: 100,
+  runs: 100,
+  duration: 3,
   progress: 0,
   tests: [
     { name: 'Find item 2000', code: 'data.find(x => x == 2000)', ops: 0 },
@@ -112,19 +112,22 @@ const app = () => {
 
   useEffect(() => {
     if (started) {
-      const tasks = () => () =>
-        pSeries(
+      const tasks = () => () => {
+        const run = pSeries(
           tests.map(test => () =>
             new Promise((resolve, reject) => {
-              var worker = new Worker('/run.js')
-              worker.postMessage([before, test, duration])
+              const worker = new Worker('/run.js')
               worker.onmessage = e => {
-                dispatch(state => ({ progress: state.progress + 1 }))
                 resolve(e.data)
+                worker.terminate()
               }
+              worker.postMessage([before, test, duration])
             })
           )
         )
+        dispatch(state => ({ progress: state.progress + tests.length }))
+        return run
+      }
       pSeries(Array.from({ length: runs }, tasks)).then(results => {
         dispatch({ tests: average(results.flat()), started: false })
       })
