@@ -35,6 +35,7 @@ const style = {
   label: css`
     width: 3rem;
     margin-top: 1rem;
+    height: 1rem;
     text-align: center;
     font-weight: 100;
     color: rgba(255, 255, 255, 0.5);
@@ -50,12 +51,24 @@ const style = {
   `,
   spinner: css`
     width: 1rem;
+    height: 1rem;
     opacity: 0.5;
+  `,
+  id: css`
+    width: 1.62rem;
+    height: 1.62rem;
+    flex: none;
+    background: rgba(0, 0, 0, 0.38);
+    color: rgba(255, 255, 255, 0.62);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
   `,
 }
 
 const Bar = tests => (test, i) => {
-  console.log(test)
   const max = Math.max(...tests.map(x => x.ops))
   const percent = test.ops ? (test.ops / max) * 100 : 0
   return html`
@@ -70,6 +83,7 @@ const Bar = tests => (test, i) => {
           }}
         ></span>
       </div>
+      <p className=${style.id}>${i + 1}</p>
       <div className=${style.label}>
         ${test.ops === -1 || test.ops === -2
           ? 0

@@ -16,10 +16,9 @@ const insert = (arr, index, newItem) => [
 const style = {
   editor: {
     width: '100%',
-    fontSize: 16,
     backgroundColor: '#2a2b2f',
     color: 'rgb(255, 255, 255)',
-    borderRadius: '1rem',
+    borderRadius: '0.62rem',
     fontFamily: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New'",
     lineHeight: '170%',
   },
@@ -53,6 +52,31 @@ const style = {
   spinner: css`
     width: 1.38rem;
     opacity: 0.5;
+  `,
+  nameInput: css`
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1rem;
+    flex: 1 1 100%;
+    padding: 0.38rem 0;
+    min-width: 0;
+    margin-right: 0.62rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    outline: none;
+  `,
+  id: css`
+    width: 1.62rem;
+    height: 1.62rem;
+    flex: none;
+    background: rgba(0, 0, 0, 0.38);
+    color: rgba(255, 255, 255, 0.62);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 }
 
@@ -100,6 +124,18 @@ export const TestControls = ({
 }) => {
   return html`
     <div className="test__controls">
+      <small className=${style.id}>${id + 1}</small>
+      <input
+        className=${style.nameInput}
+        onInput=${e => {
+          dispatch(state => ({
+            tests: tests.map((t, i) =>
+              i === id ? { ...t, name: e.target.value } : t
+            ),
+          }))
+        }}
+        value=${`${test.name || 'Test Case'}`}
+      />
       <p>
         ${test.ops === -2
           ? 'Untested'
@@ -174,6 +210,15 @@ export default ({ state, dispatch }) => {
         ${tests.map(
           (test, id) => html`
             <li key=${id} className="test">
+              <${TestControls}
+                id=${id}
+                tests=${tests}
+                test=${test}
+                runs=${runs}
+                duration=${duration}
+                progress=${progress}
+                dispatch=${dispatch}
+              />
               <div className="test__editor">
                 <${Editor}
                   key=${id}
@@ -189,15 +234,6 @@ export default ({ state, dispatch }) => {
                   padding=${20}
                 />
               </div>
-              <${TestControls}
-                id=${id}
-                tests=${tests}
-                test=${test}
-                runs=${runs}
-                duration=${duration}
-                progress=${progress}
-                dispatch=${dispatch}
-              />
             </li>
           `
         )}
