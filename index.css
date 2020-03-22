@@ -72,6 +72,7 @@ button:hover {
   background: #2f3138;
   color: rgba(255, 255, 255, 0.62);
   max-height: 100vh;
+  max-width: 100vw;
 }
 
 .tests__header {
@@ -90,6 +91,7 @@ button:hover {
 
   padding: 4rem;
   overflow-x: auto;
+  max-width: 100vw;
 }
 
 .graph > div + div {
@@ -98,11 +100,10 @@ button:hover {
 
 .test {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  border-radius: 1rem;
+  flex-direction: column;
+  border-radius: 0.62rem;
   background-color: #2a2b2f;
+  overflow: hidden;
   color: #fff;
 }
 
@@ -114,13 +115,13 @@ button:hover {
 }
 
 .test__controls {
-  flex-shrink: 0;
-
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.1);
+  width: 100%;
 
   margin-left: auto;
-  padding: 1.3rem 1rem 1rem;
+  padding: 0.62rem 1rem;
 }
 
 .test__controls p {
@@ -129,6 +130,8 @@ button:hover {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.38rem;
   border-radius: 0.38rem;
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 /* Media queries
@@ -155,8 +158,11 @@ button:hover {
 }
 
 @media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
   .tests {
-    padding: 2rem;
+    padding: 2rem 1.38rem;
   }
 }
 

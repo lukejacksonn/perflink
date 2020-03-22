@@ -24,9 +24,9 @@ const defaults = {
   duration: 100,
   progress: 0,
   tests: [
-    { code: 'data.find(x => x == 2000)', ops: 0 },
-    { code: 'data.find(x => x == 4000)', ops: 0 },
-    { code: 'data.find(x => x == 8000)', ops: 0 },
+    { name: 'Find item 2000', code: 'data.find(x => x == 2000)', ops: 0 },
+    { name: 'Find item 4000', code: 'data.find(x => x == 4000)', ops: 0 },
+    { name: 'Find item 8000', code: 'data.find(x => x == 8000)', ops: 0 },
   ],
 }
 
@@ -83,19 +83,25 @@ function average(arr) {
   var sums = {},
     counts = {},
     results = [],
+    ids = {},
     name
   for (var i = 0; i < arr.length; i++) {
     name = arr[i].code
     if (!(name in sums)) {
       sums[name] = 0
       counts[name] = 0
+      ids[name] = arr[i].name
     }
     sums[name] += arr[i].ops
     counts[name]++
   }
 
   for (name in sums) {
-    results.push({ code: name, ops: (sums[name] / counts[name]) << 0 })
+    results.push({
+      name: ids[name],
+      code: name,
+      ops: (sums[name] / counts[name]) << 0,
+    })
   }
   return results
 }
