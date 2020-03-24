@@ -287,9 +287,7 @@ export default ({ state, dispatch }) => {
             localStorage.setItem(
               key,
               JSON.stringify({
-                title: exists
-                  ? `${title} (${uid(4)})`
-                  : title || `Untitled Test (${uid(4)})`,
+                title: exists ? uid() : title || uid(),
                 before,
                 tests,
                 updated: new Date(),
@@ -297,9 +295,7 @@ export default ({ state, dispatch }) => {
             )
             dispatch({
               id: key,
-              title: exists
-                ? `${title} (${uid(4)})`
-                : title || `Untitled Test (${uid(4)})`,
+              title: exists ? uid() : title || uid(),
               suites: Object.entries(localStorage).map(([k, v]) => [
                 k,
                 JSON.parse(v),

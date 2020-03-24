@@ -12,12 +12,13 @@ const style = {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 3rem 3rem 3rem;
     color: rgba(255, 255, 255, 0.62);
+    padding: 3rem 2rem 3rem;
     > * + * {
       margin-top: 3rem;
     }
     @media (min-width: 480px) {
+      padding: 3rem 3rem 3rem;
       > * + * {
         margin-top: 2rem;
       }
