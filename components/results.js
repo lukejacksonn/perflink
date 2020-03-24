@@ -7,17 +7,42 @@ const round = num => parseFloat(num).toFixed(2)
 
 const style = {
   aside: css`
+    grid-area: graph;
+
     display: flex;
     flex-direction: column;
-    color: #fff;
+    justify-content: center;
+
+    padding: 3rem 3rem 4rem;
     overflow-x: auto;
+    max-width: 100vw;
+
+    & div > div + div {
+      margin-left: 1rem;
+    }
   `,
   graph: css`
     margin: 0 auto;
     flex: 1 1 100%;
-    padding: 4rem;
+    padding: 4rem 3rem 3rem;
     display: flex;
-    align-items: flex-end;
+  `,
+  title: css`
+    text-align: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 1.2rem;
+    flex: none;
+    padding: 0;
+    font-weight: bold;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    outline: none;
+    max-width: 100%;
   `,
   result: css`
     display: flex;
@@ -34,20 +59,11 @@ const style = {
   `,
   label: css`
     width: 3rem;
-    margin-top: 0.62rem;
+    margin-top: 1rem;
     height: 1rem;
     text-align: center;
     font-weight: 100;
     color: rgba(255, 255, 255, 0.5);
-  `,
-  legend: css`
-    position: sticky;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 200;
-    padding: 0 0 3rem;
   `,
   spinner: css`
     width: 1rem;
@@ -64,7 +80,7 @@ const style = {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 0.62rem;
+    margin-top: 1rem;
   `,
 }
 
@@ -99,11 +115,39 @@ const Bar = tests => (test, i) => {
   `
 }
 
-export default ({ state }) => {
-  const { tests } = state
+export default ({ state, dispatch }) => {
+  const { tests, title, started } = state
   return html`
-    <aside className="graph">
-      ${tests.filter(x => x.ops !== -2).map(Bar(tests))}
+    <aside className=${style.aside}>
+      <div className="aside-toggle">
+        <button disabled="true" onClick=${() => dispatch({ aside: 'results' })}>
+          <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M16 14v1H0V0h1v14h15zM5 13H3V8h2v5zm4 0H7V3h2v10zm4 0h-2V6h2v7z"
+            ></path>
+          </svg>
+          <span>Results</span>
+        </button>
+        <button onClick=${() => dispatch({ aside: 'tests' })}>
+          <svg width="20" height="20" viewBox="0 0 14 16" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M13 2H1v2h12V2zM0 4a1 1 0 001 1v9a1 1 0 001 1h10a1 1 0 001-1V5a1 1 0 001-1V2a1 1 0 00-1-1H1a1 1 0 00-1 1v2zm2 1h10v9H2V5zm2 3h6V7H4v1z"
+            ></path>
+          </svg>
+          <span>Archive</span>
+        </button>
+      </div>
+      <div className=${style.graph}>
+        ${tests.filter(x => x.ops !== -2).map(Bar(tests))}
+      </div>
+      <input
+        disabled=${started}
+        className=${style.title}
+        onInput=${e => dispatch({ title: e.target.value })}
+        value=${title}
+      />
     </aside>
   `
 }

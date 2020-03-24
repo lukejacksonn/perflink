@@ -7,10 +7,12 @@ import {
 
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
+import uid from 'https://cdn.pika.dev/uid'
 
 const html = htm.bind(h)
 
 import Tests from '../../components/tests.js'
+import Suites from '../../components/suites.js'
 import Results from '../../components/results.js'
 
 const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
@@ -19,14 +21,18 @@ const mean = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 const defaults = {
   started: false,
   dialog: true,
-  before: `const data = [...Array(8000).keys()]`,
+  aside: 'results',
+  suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
   runs: 100,
   duration: 3,
   progress: 0,
+  id: uid(),
+  title: 'Finding numbers in an array',
+  before: `const data = [...Array(800).keys()]`,
   tests: [
-    { name: 'Find item 2000', code: 'data.find(x => x == 2000)', ops: 0 },
-    { name: 'Find item 4000', code: 'data.find(x => x == 4000)', ops: 0 },
-    { name: 'Find item 8000', code: 'data.find(x => x == 8000)', ops: 0 },
+    { name: 'Find item 2000', code: 'data.find(x => x == 200)', ops: 0 },
+    { name: 'Find item 4000', code: 'data.find(x => x == 400)', ops: 0 },
+    { name: 'Find item 8000', code: 'data.find(x => x == 800)', ops: 0 },
   ],
 }
 
@@ -36,6 +42,8 @@ const init = location.hash
       dialog: false,
       before: atob(location.hash.slice(1).split('/')[0]),
       tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
+      title: atob(location.hash.slice(1).split('/')[2] || ''),
+      id: atob(location.hash.slice(1).split('/')[3] || uid()),
     }
   : defaults
 
@@ -108,7 +116,17 @@ function average(arr) {
 
 const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
-  const { before, started, tests, dialog, runs, duration } = state
+  const {
+    before,
+    started,
+    tests,
+    dialog,
+    runs,
+    duration,
+    title,
+    id,
+    suites,
+  } = state
 
   useEffect(() => {
     if (started) {
@@ -138,9 +156,28 @@ const app = () => {
     history.replaceState(
       null,
       null,
-      `#${btoa(before)}/${btoa(JSON.stringify(tests))}`
+      `#${btoa(before)}/${btoa(JSON.stringify(tests))}/${btoa(title)}/${btoa(
+        id
+      )}`
     )
-  }, [tests])
+    if (Object.fromEntries(suites)[id]) {
+      localStorage.setItem(
+        id,
+        JSON.stringify({
+          title,
+          before,
+          tests,
+          updated: new Date(),
+        })
+      )
+      dispatch({
+        suites: Object.entries(localStorage).map(([k, v]) => [
+          k,
+          JSON.parse(v),
+        ]),
+      })
+    }
+  }, [id, title, before, tests])
 
   useEffect(() => {
     addEventListener(
@@ -148,7 +185,7 @@ const app = () => {
       e => {
         if (
           (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) &&
-          e.keyCode == 83
+          e.keyCode == 13
         ) {
           e.preventDefault()
           dispatch(state => ({
@@ -165,7 +202,13 @@ const app = () => {
   return html`
     <main className="app">
       <${Tests} state=${state} dispatch=${dispatch} />
-      <${Results} state=${state} />
+      ${state.aside === 'results'
+        ? html`
+            <${Results} state=${state} dispatch=${dispatch} />
+          `
+        : html`
+            <${Suites} state=${state} dispatch=${dispatch} />
+          `}
       ${dialog &&
         html`
           <dialog open>
