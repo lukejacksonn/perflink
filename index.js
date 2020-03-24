@@ -213,10 +213,10 @@ const app = () => {
         html`
           <dialog open>
             <h1><i>Perflink</i></h1>
-            <h3>Live Javascript Benchmarking</h3>
             <p>
-              Write scripts and race them. See results graphed out as you type.
-              Share your findings via URL.
+              Quick and easy JavaScript benchmarks.
+              <br />
+              Reliably compare code exectution times in browser.
             </p>
             <button
               onClick=${_ => {

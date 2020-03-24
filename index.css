@@ -188,7 +188,7 @@ dialog {
 }
 
 dialog h1 {
-  font-size: 20vmin;
+  font-size: 16vmin;
 }
 
 dialog h3 {
@@ -202,7 +202,7 @@ dialog h3 {
 }
 
 dialog p {
-  max-width: 45ex;
+  max-width: 50ex;
   text-align: center;
   line-height: 150%;
   font-size: 3vmin;
@@ -217,5 +217,6 @@ dialog button {
   border: 1px solid hotpink;
   margin-top: 2rem;
   font-size: 1.2rem;
+  height: 4rem;
   padding: 1rem;
 }
