@@ -227,9 +227,7 @@ export const TestControls = ({ id, test, state, dispatch }) => {
             ? 'Failed'
             : test.ops === 0
             ? `Testing ${((progress / (tests.length * runs)) * 100) << 0}%`
-            : `${Number((test.ops * (1000 / duration)) << 0).toLocaleString(
-                'en'
-              )} ops/s`)}
+            : `${Number(test.ops).toLocaleString('en')} ops/s`)}
       </p>
       <button
         disabled=${started}

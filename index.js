@@ -114,7 +114,11 @@ function average(arr) {
   return results
 }
 
-const app = () => {
+function toURL(code, type = 'application/javascript') {
+  return URL.createObjectURL(new Blob([code], { type }))
+}
+
+const app = ({ WORKER }) => {
   const [state, dispatch] = useReducer(reducer, init)
   const {
     before,
@@ -134,9 +138,10 @@ const app = () => {
         const run = pSeries(
           tests.map(test => () =>
             new Promise((resolve, reject) => {
-              const worker = new Worker('/run.js')
+              const worker = new Worker(WORKER)
               worker.onmessage = e => {
-                resolve(e.data)
+                const ops = (e.data * (1000 / duration)) << 0
+                resolve({ ...test, ops })
                 worker.terminate()
               }
               worker.postMessage([before, test, duration])
@@ -231,9 +236,14 @@ const app = () => {
   `
 }
 
-render(
-  html`
-    <${app} />
-  `,
-  document.body
-)
+fetch('./run.js')
+  .then(res => res.text())
+  .then(toURL)
+  .then(worker => {
+    render(
+      html`
+        <${app} WORKER=${worker} />
+      `,
+      document.body
+    )
+  })
