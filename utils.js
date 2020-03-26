@@ -48,7 +48,7 @@ export const average = arr => {
     results.push({
       name: ids[name],
       code: name,
-      ops: (sums[name] / counts[name]) << 0,
+      ops: sums[name] < 0 ? -1 : (sums[name] / counts[name]) << 0,
     })
   }
   return results
@@ -119,3 +119,6 @@ export const addTestCase = state => ({
 
 const { highlight, languages } = Prism
 export const highlightCode = code => highlight(code, languages.js)
+
+export const getColorForPercent = value =>
+  `hsl(${(value * 120).toString(10)},62%,50%)`
