@@ -56,3 +56,22 @@ export const average = arr => {
 
 export const toURL = (code, type = 'application/javascript') =>
   URL.createObjectURL(new Blob([code], { type }))
+
+export const fetchWorkerScript = () =>
+  fetch('./run.js')
+    .then(res => res.text())
+    .then(toURL)
+
+export const startTesting = state => ({
+  tests: state.tests.map(test => ({ ...test, ops: 0 })),
+  started: true,
+  progress: 0,
+})
+
+export const latestLocalStorage = () => ({
+  suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
+})
+
+export const updateProgress = state => ({
+  progress: state.progress + state.tests.length,
+})
