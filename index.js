@@ -1,12 +1,7 @@
 import { h, render } from 'https://cdn.pika.dev/preact@10.3.3'
-import {
-  useReducer,
-  useState,
-  useEffect,
-} from 'https://cdn.pika.dev/preact@10.3.3/hooks'
+import { useReducer, useEffect } from 'https://cdn.pika.dev/preact@10.3.3/hooks'
 
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
 import uid from 'https://cdn.pika.dev/uid'
 
 const html = htm.bind(h)
@@ -14,9 +9,6 @@ const html = htm.bind(h)
 import Tests from '../../components/tests.js'
 import Suites from '../../components/suites.js'
 import Results from '../../components/results.js'
-
-const median = xs => xs.sort()[Math.ceil(xs.length / 2)]
-const mean = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 
 const defaults = {
   started: false,
@@ -137,7 +129,7 @@ const app = ({ WORKER }) => {
       const tasks = () => () => {
         const run = pSeries(
           tests.map(test => () =>
-            new Promise((resolve, reject) => {
+            new Promise(resolve => {
               const worker = new Worker(WORKER)
               worker.onmessage = e => {
                 const ops = (e.data * (1000 / duration)) << 0

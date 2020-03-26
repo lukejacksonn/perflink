@@ -3,7 +3,6 @@ import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 
 const html = htm.bind(h)
-const round = num => parseFloat(num).toFixed(2)
 
 const style = {
   aside: css`

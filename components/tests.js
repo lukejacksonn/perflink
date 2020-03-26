@@ -2,12 +2,11 @@ import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 import uid from 'https://cdn.pika.dev/uid'
-import { CopyIcon, CloseIcon, SaveIcon } from './icons.js'
+import { CopyIcon, CloseIcon } from './icons.js'
 import Editor from './editor.js'
 
 const html = htm.bind(h)
 const { highlight, languages } = Prism
-const round = num => parseFloat(num).toFixed(0)
 const insert = (arr, index, newItem) => [
   ...arr.slice(0, index),
   newItem,
@@ -171,39 +170,6 @@ const style = {
   `,
 }
 
-function commaFormatted(amount) {
-  var delimiter = ',' // replace comma if desired
-  var a = amount.split('.', 2)
-  var d = a[1]
-  var i = parseInt(a[0])
-  if (isNaN(i)) {
-    return ''
-  }
-  var minus = ''
-  if (i < 0) {
-    minus = '-'
-  }
-  i = Math.abs(i)
-  var n = new String(i)
-  var a = []
-  while (n.length > 3) {
-    var nn = n.substr(n.length - 3)
-    a.unshift(nn)
-    n = n.substr(0, n.length - 3)
-  }
-  if (n.length > 0) {
-    a.unshift(n)
-  }
-  n = a.join(delimiter)
-  if (d.length < 1) {
-    amount = n
-  } else {
-    amount = n + '.' + d
-  }
-  amount = minus + amount
-  return amount
-}
-
 export const TestControls = ({ id, test, state, dispatch }) => {
   const { tests, runs, duration, progress, started } = state
   return html`
@@ -213,7 +179,7 @@ export const TestControls = ({ id, test, state, dispatch }) => {
         disabled=${started}
         className=${style.nameInput}
         onInput=${e => {
-          dispatch(state => ({
+          dispatch(() => ({
             tests: tests.map((t, i) =>
               i === id ? { ...t, name: e.target.value } : t
             ),
@@ -247,9 +213,8 @@ export const TestControls = ({ id, test, state, dispatch }) => {
   `
 }
 
-let debouncedSetStart
 export default ({ state, dispatch }) => {
-  const { suites, before, tests, runs, duration, progress, id, title } = state
+  const { suites, before, tests, id, title } = state
   return html`
     <article className="tests">
       <div className="tests__header">
