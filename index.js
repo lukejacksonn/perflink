@@ -32,16 +32,7 @@ const init = location.hash
   ? {
       ...defaults,
       dialog: false,
-      before: atob(decodeURIComponent(location.hash.slice(1).split('/')[0])),
-      tests: JSON.parse(
-        atob(decodeURIComponent(location.hash.slice(1).split('/')[1]))
-      ),
-      title: atob(
-        decodeURIComponent(location.hash.slice(1).split('/')[2] || '')
-      ),
-      id: atob(
-        decodeURIComponent(location.hash.slice(1).split('/')[3] || uid())
-      ),
+      ...JSON.parse(atob(decodeURIComponent(location.hash.slice(1)))),
     }
   : defaults
 
@@ -112,10 +103,6 @@ function average(arr) {
   return results
 }
 
-function toURL(code, type = 'application/javascript') {
-  return URL.createObjectURL(new Blob([code], { type }))
-}
-
 const app = ({ WORKER }) => {
   const [state, dispatch] = useReducer(reducer, init)
   const {
@@ -156,24 +143,11 @@ const app = ({ WORKER }) => {
   }, [started, tests])
 
   useEffect(() => {
-    history.replaceState(
-      null,
-      null,
-      `#${encodeURIComponent(btoa(before))}/${encodeURIComponent(
-        btoa(JSON.stringify(tests))
-      )}/${encodeURIComponent(btoa(title))}/${encodeURIComponent(btoa(id))}`
-    )
+    const x = JSON.stringify({ title, before, tests, updated: new Date(), id })
+    history.replaceState(null, null, `#${encodeURIComponent(btoa(x))}`)
     if (Object.fromEntries(suites)[id]) {
       console.log(before, JSON.stringify(tests))
-      localStorage.setItem(
-        id,
-        JSON.stringify({
-          title,
-          before,
-          tests,
-          updated: new Date(),
-        })
-      )
+      localStorage.setItem(id, x)
       dispatch({
         suites: Object.entries(localStorage).map(([k, v]) => [
           k,
@@ -233,6 +207,10 @@ const app = ({ WORKER }) => {
         `}
     </main>
   `
+}
+
+function toURL(code, type = 'application/javascript') {
+  return URL.createObjectURL(new Blob([code], { type }))
 }
 
 fetch('./run.js')
