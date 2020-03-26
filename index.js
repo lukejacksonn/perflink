@@ -50,7 +50,7 @@ const reducer = (state, update) => ({
   ...(typeof update === 'function' ? update(state) : update),
 })
 
-const app = ({ WORKER }) => {
+const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
   const {
     before,

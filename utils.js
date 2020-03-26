@@ -57,6 +57,21 @@ export const average = arr => {
 export const toURL = (code, type = 'application/javascript') =>
   URL.createObjectURL(new Blob([code], { type }))
 
+export const timeSince = date => {
+  const seconds = Math.floor((new Date() - date) / 1000)
+  let interval = Math.floor(seconds / 31536000)
+  if (interval > 1) return interval + ' years'
+  interval = Math.floor(seconds / 2592000)
+  if (interval > 1) return interval + ' months'
+  interval = Math.floor(seconds / 86400)
+  if (interval > 1) return interval + ' days'
+  interval = Math.floor(seconds / 3600)
+  if (interval > 1) return interval + ' hours'
+  interval = Math.floor(seconds / 60)
+  if (interval > 1) return interval + ' minutes'
+  return Math.floor(seconds) < 5 ? 'just now' : Math.floor(seconds) + ' seconds'
+}
+
 export const fetchWorkerScript = () =>
   fetch('./run.js')
     .then(res => res.text())
@@ -75,3 +90,32 @@ export const latestLocalStorage = () => ({
 export const updateProgress = state => ({
   progress: state.progress + state.tests.length,
 })
+
+const insertItemAtIndex = (arr, index, item) => [
+  ...arr.slice(0, index),
+  item,
+  ...arr.slice(index),
+]
+
+export const updateTestCaseName = (id, name) => state => ({
+  tests: state.tests.map((t, i) => (i === id ? { ...t, name } : t)),
+})
+
+export const updateTestCaseCode = (id, code) => state => ({
+  tests: state.tests.map((t, i) => (i === id ? { ...t, code } : t)),
+})
+
+export const removeTestCase = id => state => ({
+  tests: state.tests.filter((_, i) => i !== id),
+})
+
+export const copyTestCase = id => state => ({
+  tests: insertItemAtIndex(state.tests, id, state.tests[id]),
+})
+
+export const addTestCase = state => ({
+  tests: [{ code: '', ops: -2 }, ...state.tests],
+})
+
+const { highlight, languages } = Prism
+export const highlightCode = code => highlight(code, languages.js)
