@@ -1,9 +1,61 @@
 import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
-import { RemoveIcon } from './icons.js'
+
+import { RemoveIcon, GraphIcon, ArchiveIcon } from './icons.js'
+import { timeSince, latestLocalStorage } from '../utils.js'
 
 const html = htm.bind(h)
+
+const suite = dispatch => ([id, { title, before, tests, updated }]) =>
+  html`
+    <li className=${style.item}>
+      <div
+        key=${id}
+        onClick=${() =>
+          dispatch({ id, title, before, tests, aside: 'results' })}
+      >
+        <h4>${title}</h4>
+        <small>
+          ${tests.length} test cases updated ${timeSince(new Date(updated))} ago
+        </small>
+      </div>
+      <button
+        onClick=${() => {
+          localStorage.removeItem(id)
+          dispatch(latestLocalStorage)
+        }}
+      >
+        <${RemoveIcon} />
+      </button>
+    </li>
+  `
+
+export default ({ state, dispatch }) => {
+  const { suites } = state
+
+  return html`
+    <aside className=${style.container}>
+      <div className="aside-toggle">
+        <button onClick=${() => dispatch({ aside: 'results' })}>
+          <${GraphIcon} />
+          <span>Results</span>
+        </button>
+        <button disabled="true" onClick=${() => dispatch({ aside: 'tests' })}>
+          <${ArchiveIcon} />
+          <span>Archive</span>
+        </button>
+      </div>
+      <ul className=${style.list}>
+        ${suites
+          .sort(([k, v], [k1, v1]) =>
+            +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
+          )
+          .map(suite(dispatch))}
+      </ul>
+    </aside>
+  `
+}
 
 const style = {
   container: css`
@@ -73,84 +125,4 @@ const style = {
       padding: 0;
     }
   `,
-}
-
-function timeSince(date) {
-  const seconds = Math.floor((new Date() - date) / 1000)
-  let interval = Math.floor(seconds / 31536000)
-  if (interval > 1) return interval + ' years'
-  interval = Math.floor(seconds / 2592000)
-  if (interval > 1) return interval + ' months'
-  interval = Math.floor(seconds / 86400)
-  if (interval > 1) return interval + ' days'
-  interval = Math.floor(seconds / 3600)
-  if (interval > 1) return interval + ' hours'
-  interval = Math.floor(seconds / 60)
-  if (interval > 1) return interval + ' minutes'
-  return Math.floor(seconds) < 5 ? 'just now' : Math.floor(seconds) + ' seconds'
-}
-
-const suite = dispatch => ([id, { title, before, tests, updated }]) =>
-  html`
-    <li className=${style.item}>
-      <div
-        key=${id}
-        onClick=${() =>
-          dispatch({ id, title, before, tests, aside: 'results' })}
-      >
-        <h4>${title}</h4>
-        <small>
-          ${tests.length} test cases updated ${timeSince(new Date(updated))} ago
-        </small>
-      </div>
-      <button
-        onClick=${() => {
-          localStorage.removeItem(id)
-          dispatch({
-            suites: Object.entries(localStorage).map(([k, v]) => [
-              k,
-              JSON.parse(v),
-            ]),
-          })
-        }}
-      >
-        <${RemoveIcon} />
-      </button>
-    </li>
-  `
-
-export default ({ state, dispatch }) => {
-  const { suites } = state
-
-  return html`
-    <aside className=${style.container}>
-      <div className="aside-toggle">
-        <button onClick=${() => dispatch({ aside: 'results' })}>
-          <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true">
-            <path
-              fill-rule="evenodd"
-              d="M16 14v1H0V0h1v14h15zM5 13H3V8h2v5zm4 0H7V3h2v10zm4 0h-2V6h2v7z"
-            ></path>
-          </svg>
-          <span>Results</span>
-        </button>
-        <button disabled="true" onClick=${() => dispatch({ aside: 'tests' })}>
-          <svg width="20" height="20" viewBox="0 0 14 16" aria-hidden="true">
-            <path
-              fill-rule="evenodd"
-              d="M13 2H1v2h12V2zM0 4a1 1 0 001 1v9a1 1 0 001 1h10a1 1 0 001-1V5a1 1 0 001-1V2a1 1 0 00-1-1H1a1 1 0 00-1 1v2zm2 1h10v9H2V5zm2 3h6V7H4v1z"
-            ></path>
-          </svg>
-          <span>Archive</span>
-        </button>
-      </div>
-      <ul className=${style.list}>
-        ${suites
-          .sort(([k, v], [k1, v1]) =>
-            +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
-          )
-          .map(suite(dispatch))}
-      </ul>
-    </aside>
-  `
 }

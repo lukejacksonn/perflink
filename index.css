@@ -69,18 +69,6 @@ button:hover {
   }
 }
 
-.tests__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0;
-}
-
-.test__editor {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
-  line-height: inherit;
-}
-
 .aside-toggle {
   display: flex;
   justify-content: center;
@@ -143,10 +131,6 @@ textarea:disabled {
 
   .tests {
     overflow-y: auto;
-  }
-
-  .tests__header {
-    padding: 0 1rem;
   }
 
   .graph {
