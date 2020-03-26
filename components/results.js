@@ -3,10 +3,9 @@ import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 
 import { GraphIcon, ArchiveIcon } from './icons.js'
+import { getColorForPercent } from '../utils.js'
 
 const html = htm.bind(h)
-
-const getColor = value => `hsl(${(value * 120).toString(10)},62%,50%)`
 
 const Bar = tests => (test, i) => {
   const max = Math.max(...tests.map(x => x.ops))
@@ -19,14 +18,17 @@ const Bar = tests => (test, i) => {
             width: '3px',
             transition: 'height 0.3s, background 0.3s',
             height: `${test.ops === -1 ? 100 : test.ops === -2 ? 0 : percent}%`,
-            background: test.ops === -1 ? getColor(0) : getColor(percent / 100),
+            background:
+              test.ops === -1
+                ? getColorForPercent(0)
+                : getColorForPercent(percent / 100),
           }}
         ></span>
       </div>
       <p className=${style.id}>${i + 1}</p>
       <div className=${style.label}>
         ${test.ops === -1 || test.ops === -2
-          ? 0
+          ? `${0}%`
           : test.ops === 0
           ? html`
               <img className=${style.spinner} src="/spinner.gif" />
