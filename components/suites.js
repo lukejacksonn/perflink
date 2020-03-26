@@ -1,11 +1,9 @@
 import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
-import uid from 'https://cdn.pika.dev/uid'
-import { RemoveIcon, SaveIcon } from './icons.js'
+import { RemoveIcon } from './icons.js'
 
 const html = htm.bind(h)
-const round = num => parseFloat(num).toFixed(2)
 
 const style = {
   container: css`
@@ -122,7 +120,7 @@ const suite = dispatch => ([id, { title, before, tests, updated }]) =>
   `
 
 export default ({ state, dispatch }) => {
-  const { name, suites, tests } = state
+  const { suites } = state
 
   return html`
     <aside className=${style.container}>
