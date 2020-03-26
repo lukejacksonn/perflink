@@ -32,10 +32,16 @@ const init = location.hash
   ? {
       ...defaults,
       dialog: false,
-      before: atob(location.hash.slice(1).split('/')[0]),
-      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])),
-      title: atob(location.hash.slice(1).split('/')[2] || ''),
-      id: atob(location.hash.slice(1).split('/')[3] || uid()),
+      before: atob(decodeURIComponent(location.hash.slice(1).split('/')[0])),
+      tests: JSON.parse(
+        atob(decodeURIComponent(location.hash.slice(1).split('/')[1]))
+      ),
+      title: atob(
+        decodeURIComponent(location.hash.slice(1).split('/')[2] || '')
+      ),
+      id: atob(
+        decodeURIComponent(location.hash.slice(1).split('/')[3] || uid())
+      ),
     }
   : defaults
 
@@ -153,11 +159,12 @@ const app = ({ WORKER }) => {
     history.replaceState(
       null,
       null,
-      `#${btoa(before)}/${btoa(JSON.stringify(tests))}/${btoa(title)}/${btoa(
-        id
-      )}`
+      `#${encodeURIComponent(btoa(before))}/${encodeURIComponent(
+        btoa(JSON.stringify(tests))
+      )}/${encodeURIComponent(btoa(title))}/${encodeURIComponent(btoa(id))}`
     )
     if (Object.fromEntries(suites)[id]) {
+      console.log(before, JSON.stringify(tests))
       localStorage.setItem(
         id,
         JSON.stringify({
