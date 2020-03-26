@@ -10,7 +10,14 @@ import Tests from './components/tests.js'
 import Archive from './components/archive.js'
 import Results from './components/results.js'
 
-import { pSeries, average, toURL } from './utils.js'
+import {
+  pSeries,
+  average,
+  fetchWorkerScript,
+  startTesting,
+  latestLocalStorage,
+  updateProgress,
+} from './utils.js'
 
 const defaults = {
   started: false,
@@ -43,20 +50,6 @@ const reducer = (state, update) => ({
   ...(typeof update === 'function' ? update(state) : update),
 })
 
-const startTesting = state => ({
-  tests: state.tests.map(test => ({ ...test, ops: 0 })),
-  started: true,
-  progress: 0,
-})
-
-const latestLocalStorage = () => ({
-  suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
-})
-
-const updateProgress = state => ({
-  progress: state.progress + state.tests.length,
-})
-
 const app = ({ WORKER }) => {
   const [state, dispatch] = useReducer(reducer, init)
   const {
@@ -73,27 +66,27 @@ const app = ({ WORKER }) => {
 
   useEffect(() => {
     if (started) {
-      const bench = test => () =>
-        new Promise(resolve => {
-          const worker = new Worker(WORKER)
-          worker.onmessage = e => {
-            const ops = (e.data * (1000 / duration)) << 0
-            resolve({ ...test, ops })
-            worker.terminate()
-          }
-          worker.postMessage([before, test, duration])
+      fetchWorkerScript().then(url => {
+        const bench = test => () =>
+          new Promise(resolve => {
+            const worker = new Worker(url)
+            worker.onmessage = e => {
+              const ops = (e.data * (1000 / duration)) << 0
+              resolve({ ...test, ops })
+              worker.terminate()
+            }
+            worker.postMessage([before, test, duration])
+          })
+        const tasks = () => () => {
+          dispatch(updateProgress)
+          return pSeries(tests.map(bench))
+        }
+        pSeries(Array.from({ length: runs }, tasks)).then(results => {
+          dispatch({ tests: average(results.flat()), started: false })
         })
-
-      const tasks = () => () => {
-        dispatch(updateProgress)
-        return pSeries(tests.map(bench))
-      }
-
-      pSeries(Array.from({ length: runs }, tasks)).then(results => {
-        dispatch({ tests: average(results.flat()), started: false })
       })
     }
-  }, [started, tests])
+  }, [started, before, tests])
 
   useEffect(() => {
     const x = JSON.stringify({ id, title, before, tests, updated: new Date() })
@@ -105,19 +98,11 @@ const app = ({ WORKER }) => {
   }, [id, title, before, tests])
 
   useEffect(() => {
-    addEventListener(
-      'keydown',
-      e => {
-        if (
-          (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) &&
-          e.keyCode == 13
-        ) {
-          e.preventDefault()
-          dispatch(startTesting)
-        }
-      },
-      false
-    )
+    const alt = e => (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey)
+    addEventListener('keydown', e => {
+      if (alt(e) && e.keyCode == 13)
+        e.preventDefault() || dispatch(startTesting)
+    })
   }, [])
 
   return html`
@@ -148,14 +133,9 @@ const app = ({ WORKER }) => {
   `
 }
 
-fetch('./run.js')
-  .then(res => res.text())
-  .then(toURL)
-  .then(worker => {
-    render(
-      html`
-        <${app} WORKER=${worker} />
-      `,
-      document.body
-    )
-  })
+render(
+  html`
+    <${app} />
+  `,
+  document.body
+)
