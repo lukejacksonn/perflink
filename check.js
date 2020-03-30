@@ -128,7 +128,6 @@ function toURL(code, type = 'application/javascript') {
 onmessage = async e => {
   const before = e.data[0]
   const test = e.data[1]
-  const duration = e.data[2]
   dimport(
     toURL(` 
       ${before};
@@ -136,18 +135,16 @@ onmessage = async e => {
       (async () => {
         try {
           result = await eval(\`async () => {
-            let ops = 0;
-            let end = Date.now() + ${duration};
-            while (Date.now() < end) {
+            const start = Date.now()
+            for (let i = 0; i < 10; i++) {
               ${test.code};
-              ops++;
             }
-            return ops;
+            return Date.now() - start || 1
           }\`)()
         } catch (e) {
           result = -1
         }
-        postMessage(result === -1 ? result : (result * (1000 / ${duration})) << 0)
+        postMessage(result)
       })()
     `)
   )
