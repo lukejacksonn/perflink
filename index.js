@@ -25,7 +25,7 @@ const defaults = {
   aside: 'results',
   suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
   runs: 100,
-  duration: 3,
+  duration: 1,
   progress: 0,
   id: uid(),
   title: 'Finding numbers in an array of 1000',
@@ -52,39 +52,44 @@ const reducer = (state, update) => ({
 
 const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
-  const {
-    before,
-    started,
-    tests,
-    dialog,
-    runs,
-    duration,
-    title,
-    id,
-    suites,
-  } = state
+  const { before, started, tests, dialog, runs, title, id, suites } = state
 
   useEffect(() => {
     if (started) {
-      fetchWorkerScript().then(url => {
-        const bench = test => () =>
-          new Promise(resolve => {
-            const worker = new Worker(url)
-            worker.onmessage = e => {
-              const ops = (e.data * (1000 / duration)) << 0
-              resolve({ ...test, ops })
-              worker.terminate()
-            }
-            worker.postMessage([before, test, duration])
-          })
-        const tasks = () => () => {
-          dispatch(updateProgress)
-          return pSeries(tests.map(bench))
-        }
-        pSeries(Array.from({ length: runs }, tasks)).then(results => {
-          dispatch({ tests: average(results.flat()), started: false })
-        })
-      })
+      setTimeout(() => {
+        ;(async () => {
+          const url = await fetchWorkerScript()
+          const duration = await Promise.all(
+            tests.map(
+              test =>
+                new Promise(resolve => {
+                  const worker = new Worker('/check.js')
+                  worker.onmessage = e => {
+                    resolve(e.data)
+                    worker.terminate()
+                  }
+                  worker.postMessage([before, test])
+                })
+            )
+          )
+          const bench = test =>
+            new Promise(resolve => {
+              const worker = new Worker(url)
+              worker.onmessage = e => {
+                resolve({ ...test, ops: e.data })
+                worker.terminate()
+              }
+              worker.postMessage([before, test, Math.max(...duration)])
+            })
+          const tasks = () => () => {
+            dispatch(updateProgress)
+            return Promise.all(tests.map(bench))
+          }
+          pSeries(Array.from({ length: runs }, tasks)).then(results =>
+            dispatch({ tests: average(results.flat()), started: false })
+          )
+        })()
+      }, 300)
     }
   }, [started, before, tests])
 
