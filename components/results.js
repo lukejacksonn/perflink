@@ -2,7 +2,6 @@ import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 
-import { GraphIcon, ArchiveIcon } from './icons.js'
 import { getColorForPercent } from '../utils.js'
 
 const html = htm.bind(h)
@@ -43,16 +42,6 @@ export default ({ state, dispatch }) => {
   const { tests, title, started } = state
   return html`
     <aside className=${style.aside}>
-      <div className="aside-toggle">
-        <button disabled="true" onClick=${() => dispatch({ aside: 'results' })}>
-          <${GraphIcon} />
-          <span>Results</span>
-        </button>
-        <button onClick=${() => dispatch({ aside: 'tests' })}>
-          <${ArchiveIcon} />
-          <span>Archive</span>
-        </button>
-      </div>
       <div className=${style.graph}>
         ${tests.filter(x => x.ops !== -2).map(Bar(tests))}
       </div>
@@ -85,7 +74,7 @@ const style = {
   graph: css`
     margin: 0 auto;
     flex: 1 1 100%;
-    padding: 4rem 3rem 3rem;
+    padding: 3rem 3rem 3rem;
     display: flex;
   `,
   title: css`

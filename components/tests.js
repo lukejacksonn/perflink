@@ -238,7 +238,6 @@ const style = {
     background: none;
     border: none;
     color: rgba(255, 255, 255, 0.8);
-    font-weight: bold;
     font-size: 1rem;
     flex: 1 1 100%;
     min-width: 0;
