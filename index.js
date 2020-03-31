@@ -24,13 +24,14 @@ const defaults = {
   dialog: true,
   aside: 'results',
   suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
-  runs: 100,
+  runs: 200,
   duration: 1,
   progress: 0,
   id: uid(),
   title: 'Finding numbers in an array of 1000',
   before: `const data = [...Array(1000).keys()]`,
   tests: [
+    { name: 'Find item 1000', code: 'data.find(x => x == 100)', ops: 0 },
     { name: 'Find item 2000', code: 'data.find(x => x == 200)', ops: 0 },
     { name: 'Find item 4000', code: 'data.find(x => x == 400)', ops: 0 },
     { name: 'Find item 8000', code: 'data.find(x => x == 800)', ops: 0 },
@@ -58,28 +59,29 @@ const app = () => {
     if (started) {
       setTimeout(() => {
         ;(async () => {
-          const url = await fetchWorkerScript()
+          const checkScript = await fetchWorkerScript(before, 'check')
+          const runScript = await fetchWorkerScript(before, 'run')
           const duration = await Promise.all(
             tests.map(
               test =>
                 new Promise(resolve => {
-                  const worker = new Worker('/check.js')
+                  const worker = new Worker(checkScript, { type: 'module' })
                   worker.onmessage = e => {
                     resolve(e.data)
                     worker.terminate()
                   }
-                  worker.postMessage([before, test])
+                  worker.postMessage([test])
                 })
             )
           )
           const bench = test =>
             new Promise(resolve => {
-              const worker = new Worker(url)
+              const worker = new Worker(runScript, { type: 'module' })
               worker.onmessage = e => {
                 resolve({ ...test, ops: e.data })
                 worker.terminate()
               }
-              worker.postMessage([before, test, Math.max(...duration)])
+              worker.postMessage([test, Math.max(...duration)])
             })
           const tasks = () => () => {
             dispatch(updateProgress)

@@ -72,9 +72,10 @@ export const timeSince = date => {
   return Math.floor(seconds) < 5 ? 'just now' : Math.floor(seconds) + ' seconds'
 }
 
-export const fetchWorkerScript = () =>
-  fetch('./run.js')
+export const fetchWorkerScript = (before, url) =>
+  fetch(`./${url}.js`)
     .then(res => res.text())
+    .then(x => before + ';' + x)
     .then(toURL)
 
 export const startTesting = state => ({
