@@ -24,7 +24,7 @@ const defaults = {
   dialog: true,
   aside: 'results',
   suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
-  runs: 200,
+  runs: 100,
   duration: 1,
   progress: 0,
   id: uid(),
