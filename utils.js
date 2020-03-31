@@ -30,6 +30,7 @@ export const pSeries = async tasks => {
 export const average = arr => {
   var sums = {},
     counts = {},
+    values = {},
     results = [],
     ids = {},
     name
@@ -40,14 +41,15 @@ export const average = arr => {
       counts[name] = 0
       ids[name] = arr[i].name
     }
+    values[name] = (values[name] || []).concat(arr[i].ops)
     sums[name] += arr[i].ops
     counts[name]++
   }
-
   for (name in sums) {
     results.push({
       name: ids[name],
       code: name,
+      runs: values[name],
       ops: sums[name] < 0 ? -1 : (sums[name] / counts[name]) << 0,
     })
   }
