@@ -2,8 +2,13 @@ import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 
-import { RemoveIcon, GraphIcon, ArchiveIcon } from './icons.js'
-import { timeSince, latestLocalStorage } from '../utils.js'
+import { RemoveIcon, SearchIcon, LinkIcon } from './icons.js'
+import {
+  timeSince,
+  latestLocalStorage,
+  setSearchTerm,
+  copyHashURL,
+} from '../utils.js'
 
 const html = htm.bind(h)
 
@@ -21,6 +26,17 @@ const suite = dispatch => ([id, { title, before, tests, updated }]) =>
         </small>
       </div>
       <button
+        onClick=${() =>
+          copyHashURL({
+            title,
+            before,
+            tests,
+            updated: new Date(),
+          })}
+      >
+        <${LinkIcon} />
+      </button>
+      <button
         onClick=${() => {
           localStorage.removeItem(id)
           dispatch(latestLocalStorage)
@@ -32,33 +48,47 @@ const suite = dispatch => ([id, { title, before, tests, updated }]) =>
   `
 
 export default ({ state, dispatch }) => {
-  const { suites } = state
+  const { suites, searchTerm } = state
 
   return html`
-    <aside className=${style.container}>
-      <div className="aside-toggle">
-        <button onClick=${() => dispatch({ aside: 'results' })}>
-          <${GraphIcon} />
-          <span>Results</span>
-        </button>
-        <button disabled="true" onClick=${() => dispatch({ aside: 'tests' })}>
-          <${ArchiveIcon} />
-          <span>Archive</span>
-        </button>
+    <dialog
+      className=${style.container}
+      onClick=${e =>
+        e.target.tagName === 'DIALOG' && dispatch({ aside: 'results' })}
+    >
+      <div>
+        <div className=${style.searchInput}>
+          <input
+            onInput=${e => dispatch(setSearchTerm(e.target.value))}
+            placeholder="Search the archive..."
+            value=${searchTerm}
+          />
+          <${SearchIcon} />
+        </div>
+        <ul className=${style.list}>
+          ${suites
+            .filter(x =>
+              x[1].title.toLowerCase().match(searchTerm.toLowerCase())
+            )
+            .sort(([k, v], [k1, v1]) =>
+              +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
+            )
+            .map(suite(dispatch))}
+        </ul>
       </div>
-      <ul className=${style.list}>
-        ${suites
-          .sort(([k, v], [k1, v1]) =>
-            +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
-          )
-          .map(suite(dispatch))}
-      </ul>
-    </aside>
+    </dialog>
   `
 }
 
 const style = {
   container: css`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(37, 38, 42, 0.62);
+
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -73,11 +103,33 @@ const style = {
         margin-top: 2rem;
       }
     }
+    > div {
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+      margin: auto;
+      width: 100%;
+      height: 100%;
+      max-width: 70ch;
+      background: #2f3037;
+      padding: 2rem;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      > * + * {
+        margin-top: 2rem;
+      }
+      @media (max-width: 480px) {
+        padding: 1rem;
+        > * + * {
+          margin-top: 1rem;
+        }
+      }
+    }
   `,
   list: css`
-    flex: 1 1 100%;
+    flex: 0 1 100%;
     border-radius: 1rem;
-    overflow-y: auto;
+    overflow-y: scroll;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     background: rgba(0, 0, 0, 0.1);
     padding: 2rem;
@@ -123,6 +175,28 @@ const style = {
     button {
       border: 0;
       padding: 0;
+    }
+  `,
+  searchInput: css`
+    position: relative;
+    width: 100%;
+    input {
+      width: 100%;
+      padding: 0 2rem;
+      height: 5rem;
+      font-size: 1.62rem;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.2);
+      border: 0;
+      border-radius: 1rem;
+    }
+    svg {
+      position: absolute;
+      top: 50%;
+      right: 2rem;
+      width: 2rem;
+      height: 2rem;
+      transform: translateY(-50%);
     }
   `,
 }

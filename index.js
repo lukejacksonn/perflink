@@ -3,6 +3,7 @@ import { useReducer, useEffect } from 'https://cdn.pika.dev/preact@10.3.3/hooks'
 
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import uid from 'https://cdn.pika.dev/uid'
+import css from 'https://cdn.pika.dev/csz'
 
 const html = htm.bind(h)
 
@@ -19,6 +20,8 @@ import {
   updateProgress,
 } from './utils.js'
 
+import { ArchiveIcon } from './components/icons.js'
+
 const defaults = {
   started: false,
   dialog: true,
@@ -28,6 +31,7 @@ const defaults = {
   duration: 1,
   progress: 0,
   id: uid(),
+  searchTerm: '',
   title: 'Finding numbers in an array of 1000',
   before: `const data = [...Array(1000).keys()]`,
   tests: [
@@ -53,7 +57,17 @@ const reducer = (state, update) => ({
 
 const app = () => {
   const [state, dispatch] = useReducer(reducer, init)
-  const { before, started, tests, dialog, runs, title, id, suites } = state
+  const {
+    before,
+    started,
+    tests,
+    dialog,
+    runs,
+    title,
+    id,
+    suites,
+    aside,
+  } = state
 
   useEffect(() => {
     if (started) {
@@ -106,25 +120,113 @@ const app = () => {
 
   useEffect(() => {
     const alt = e => (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey)
-    addEventListener('keydown', e => {
+    const hotKeys = e => {
+      if (e.keyCode == 27) e.preventDefault() || dispatch({ aside: 'results' })
       if (alt(e) && e.keyCode == 13)
         e.preventDefault() || dispatch(startTesting)
-    })
-  }, [])
+      if (alt(e) && e.keyCode == 80)
+        e.preventDefault() ||
+          dispatch({ aside: aside === 'archive' ? 'results' : 'archive' })
+    }
+    addEventListener('keydown', hotKeys)
+    return () => removeEventListener('keydown', hotKeys)
+  }, [aside])
 
   return html`
     <main className="app">
       <${Tests} state=${state} dispatch=${dispatch} />
-      ${state.aside === 'results'
-        ? html`
-            <${Results} state=${state} dispatch=${dispatch} />
-          `
-        : html`
-            <${Archive} state=${state} dispatch=${dispatch} />
-          `}
+      <${Results} state=${state} dispatch=${dispatch} />
+      ${state.aside === 'archive' &&
+        html`
+          <${Archive} state=${state} dispatch=${dispatch} />
+        `}
+      ${state.aside === 'results' &&
+        html`
+          <button
+            className=${css`
+              position: absolute;
+              top: 0;
+              right: 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              border-radius: 0;
+              background: rgba(0, 0, 0, 0.2);
+              height: 6rem;
+              width: 6rem;
+              flex: none;
+              border: 0;
+              svg {
+                width: 2rem;
+                height: 2rem;
+              }
+              > * + * {
+                margin-top: 0.38rem;
+              }
+            `}
+            onClick=${() =>
+              dispatch({
+                aside: state.aside === 'archive' ? 'results' : 'archive',
+              })}
+          >
+            <${ArchiveIcon} />
+            <span>Archive</span>
+          </button>
+        `}
       ${dialog &&
         html`
-          <dialog open>
+          <dialog
+            className=${css`
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              color: #fff;
+              background: rgba(44, 45, 51, 1);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              border: 0;
+
+              h1 {
+                font-size: 16vmin;
+              }
+
+              h3 {
+                text-transform: uppercase;
+                font-weight: bold;
+                letter-spacing: 1px;
+                text-align: center;
+                font-size: 3vmin !important;
+                padding: 0 2rem 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+              }
+
+              p {
+                max-width: 50ex;
+                text-align: center;
+                line-height: 150%;
+                font-size: 3vmin;
+              }
+
+              > * + * {
+                margin-top: 1rem;
+              }
+
+              button {
+                color: hotpink;
+                border: 1px solid hotpink;
+                margin-top: 2rem;
+                font-size: 1.2rem;
+                height: 4rem;
+                padding: 1rem;
+              }
+            `}
+            open
+          >
             <h1><i>Perflink</i></h1>
             <p>
               Quick and easy JavaScript benchmarks.

@@ -120,8 +120,23 @@ export const addTestCase = state => ({
   tests: [{ code: '', ops: -2 }, ...state.tests],
 })
 
+export const setSearchTerm = searchTerm => state => ({
+  searchTerm,
+})
+
 const { highlight, languages } = Prism
 export const highlightCode = code => highlight(code, languages.js)
 
 export const getColorForPercent = value =>
   `hsl(${(value * 120).toString(10)},62%,50%)`
+
+export const copyHashURL = state => {
+  const x = JSON.stringify(state)
+  const link = `${location.origin}#${encodeURIComponent(btoa(x))}`
+  var input = document.createElement('input')
+  input.setAttribute('value', link)
+  document.body.appendChild(input)
+  input.select()
+  var result = document.execCommand('copy')
+  document.body.removeChild(input)
+}
