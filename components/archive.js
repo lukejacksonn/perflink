@@ -1,16 +1,13 @@
-import { h } from 'https://cdn.pika.dev/preact@10.3.3'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
-
-import { RemoveIcon, SearchIcon, LinkIcon, ArchiveIcon } from './icons.js'
 import {
+  html,
+  css,
   timeSince,
   latestLocalStorage,
   setSearchTerm,
   copyHashURL,
 } from '../utils.js'
 
-const html = htm.bind(h)
+import { RemoveIcon, SearchIcon, LinkIcon, ArchiveIcon } from './icons.js'
 
 const suite = dispatch => ([id, { title, before, tests, updated }]) =>
   html`

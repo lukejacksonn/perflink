@@ -1,10 +1,4 @@
-import { h } from 'https://cdn.pika.dev/preact@10.3.3'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
-
-import { getColorForPercent } from '../utils.js'
-
-const html = htm.bind(h)
+import { html, css, getColorForPercent } from '../utils.js'
 
 const Bar = tests => (test, i) => {
   const max = Math.max(...tests.map(x => x.ops))

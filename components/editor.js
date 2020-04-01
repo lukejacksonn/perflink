@@ -1,4 +1,4 @@
-import * as React from 'https://cdn.pika.dev/preact@10.3.3'
+import { preact as React } from '../utils.js'
 
 var _extends =
   Object.assign ||

@@ -1,17 +1,7 @@
-import { h, render } from 'https://cdn.pika.dev/preact@10.3.3'
-import { useReducer, useEffect } from 'https://cdn.pika.dev/preact@10.3.3/hooks'
-
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import uid from 'https://cdn.pika.dev/uid'
-
-const html = htm.bind(h)
-
-import Tests from './components/tests.js'
-import Archive from './components/archive.js'
-import Results from './components/results.js'
-import Welcome from './components/welcome.js'
-
 import {
+  html,
+  preact,
+  uid,
   pSeries,
   average,
   fetchWorkerScript,
@@ -20,6 +10,12 @@ import {
   updateProgress,
 } from './utils.js'
 
+import Tests from './components/tests.js'
+import Archive from './components/archive.js'
+import Results from './components/results.js'
+import Welcome from './components/welcome.js'
+
+const { render, useReducer, useEffect } = preact
 const defaults = {
   started: false,
   dialog: true,

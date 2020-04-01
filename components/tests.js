@@ -1,18 +1,7 @@
-import { h } from 'https://cdn.pika.dev/preact@10.3.3'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
-import uid from 'https://cdn.pika.dev/uid'
-
 import {
-  CopyIcon,
-  CloseIcon,
-  RunIcon,
-  ForkIcon,
-  SaveIcon,
-  AddIcon,
-} from './icons.js'
-
-import {
+  html,
+  css,
+  uid,
   startTesting,
   latestLocalStorage,
   updateTestCaseName,
@@ -23,9 +12,16 @@ import {
   highlightCode,
 } from '../utils.js'
 
-import Editor from './editor.js'
+import {
+  CopyIcon,
+  CloseIcon,
+  RunIcon,
+  ForkIcon,
+  SaveIcon,
+  AddIcon,
+} from './icons.js'
 
-const html = htm.bind(h)
+import Editor from './editor.js'
 
 export const TestControls = ({ id, test, state, dispatch }) => {
   const { tests, runs, progress, started } = state

@@ -1,3 +1,18 @@
+import * as preacts from 'https://cdn.pika.dev/preact@10.3.3'
+import * as hooks from 'https://cdn.pika.dev/preact@10.3.3/hooks'
+import css from 'https://cdn.pika.dev/csz@1.2.0'
+import htm from 'https://cdn.pika.dev/htm@3.0.3'
+import uid from 'https://cdn.pika.dev/uid'
+
+const html = htm.bind(preacts.h)
+
+const preact = {
+  ...preacts,
+  ...hooks,
+}
+
+export { preact, html, css, uid }
+
 const pReduce = (iterable, reducer, initialValue) =>
   new Promise((resolve, reject) => {
     const iterator = iterable[Symbol.iterator]()

@@ -1,8 +1,4 @@
-import { h } from 'https://cdn.pika.dev/preact@10.3.3'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
-
-const html = htm.bind(h)
+import { html, css } from '../utils.js'
 
 export default ({ state, dispatch }) =>
   state.dialog &&
