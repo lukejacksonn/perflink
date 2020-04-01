@@ -179,7 +179,7 @@ const style = {
   `,
   start: css`
     color: lightblue;
-    border: 2px solid lightblue;
+    border: 3px solid lightblue;
     border-radius: 1rem 0rem 0rem 1rem;
     height: 3rem;
     display: flex;
