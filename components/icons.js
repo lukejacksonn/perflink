@@ -1,7 +1,4 @@
-import { h } from 'https://cdn.pika.dev/preact@10.3.3'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-
-const html = htm.bind(h)
+import { html } from '../utils.js'
 
 export const CopyIcon = () => html`
   <svg width="20" height="20" viewBox="0 0 24 24">
