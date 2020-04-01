@@ -132,7 +132,7 @@ export const copyTestCase = id => state => ({
 })
 
 export const addTestCase = state => ({
-  tests: [{ code: '', ops: -2 }, ...state.tests],
+  tests: [{ code: '', name: 'Test Case', ops: -2 }, ...state.tests],
 })
 
 export const setSearchTerm = searchTerm => state => ({
