@@ -29,10 +29,10 @@ const defaults = {
   title: 'Finding numbers in an array of 1000',
   before: `const data = [...Array(1000).keys()]`,
   tests: [
-    { name: 'Find item 1000', code: 'data.find(x => x == 100)', ops: 0 },
-    { name: 'Find item 2000', code: 'data.find(x => x == 200)', ops: 0 },
-    { name: 'Find item 4000', code: 'data.find(x => x == 400)', ops: 0 },
-    { name: 'Find item 8000', code: 'data.find(x => x == 800)', ops: 0 },
+    { name: 'Find item 100', code: 'data.find(x => x == 100)', ops: 0 },
+    { name: 'Find item 200', code: 'data.find(x => x == 200)', ops: 0 },
+    { name: 'Find item 400', code: 'data.find(x => x == 400)', ops: 0 },
+    { name: 'Find item 800', code: 'data.find(x => x == 800)', ops: 0 },
   ],
 }
 
