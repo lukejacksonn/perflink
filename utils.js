@@ -1,5 +1,5 @@
 import * as preacts from 'https://cdn.pika.dev/pin/preact@v10.3.3-uhXRG2PBJBDIY1Ef8sXg/preact.js'
-import * as hooks from 'https://cdn.pika.dev/preact@v10.3.3/hooks'
+import * as hooks from 'https://cdn.pika.dev/pin/preact@v10.3.3-uhXRG2PBJBDIY1Ef8sXg/mode=exports/hooks'
 import css from 'https://cdn.pika.dev/pin/csz@v1.2.0-900XZmsdBeMLogkkQcD4/csz.js'
 import htm from 'https://cdn.pika.dev/pin/htm@v3.0.3-33cAE1PKrpVh0FdAUIDa/htm.js'
 import uid from 'https://cdn.pika.dev/pin/uid@v1.0.0-pGHaO3w0IERLifBCfHfR/uid.js'
