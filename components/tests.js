@@ -33,7 +33,7 @@ export const TestControls = ({ id, test, state, dispatch }) => {
         disabled=${started}
         className=${style.nameInput}
         onInput=${e => dispatch(updateTestCaseName(id, e.target.value))}
-        value=${`${test.name || 'Test Case'}`}
+        value=${`${test.name}`}
       />
       <p>
         ${test.ops !== -2 &&
