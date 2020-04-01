@@ -2,7 +2,7 @@ import { h } from 'https://cdn.pika.dev/preact@10.3.3'
 import htm from 'https://cdn.pika.dev/htm@3.0.3'
 import css from 'https://cdn.pika.dev/csz@1.2.0'
 
-import { RemoveIcon, SearchIcon, LinkIcon } from './icons.js'
+import { RemoveIcon, SearchIcon, LinkIcon, ArchiveIcon } from './icons.js'
 import {
   timeSince,
   latestLocalStorage,
@@ -48,36 +48,48 @@ const suite = dispatch => ([id, { title, before, tests, updated }]) =>
   `
 
 export default ({ state, dispatch }) => {
-  const { suites, searchTerm } = state
-
-  return html`
-    <dialog
-      className=${style.container}
-      onClick=${e =>
-        e.target.tagName === 'DIALOG' && dispatch({ aside: 'results' })}
-    >
-      <div>
-        <div className=${style.searchInput}>
-          <input
-            onInput=${e => dispatch(setSearchTerm(e.target.value))}
-            placeholder="Search the archive..."
-            value=${searchTerm}
-          />
-          <${SearchIcon} />
-        </div>
-        <ul className=${style.list}>
-          ${suites
-            .filter(x =>
-              x[1].title.toLowerCase().match(searchTerm.toLowerCase())
-            )
-            .sort(([k, v], [k1, v1]) =>
-              +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
-            )
-            .map(suite(dispatch))}
-        </ul>
-      </div>
-    </dialog>
-  `
+  const { suites, searchTerm, aside } = state
+  return aside === 'results'
+    ? html`
+        <button
+          className=${style.showArchiveButton}
+          onClick=${() =>
+            dispatch({
+              aside: state.aside === 'archive' ? 'results' : 'archive',
+            })}
+        >
+          <${ArchiveIcon} />
+          <span>Archive</span>
+        </button>
+      `
+    : html`
+        <dialog
+          className=${style.container}
+          onClick=${e =>
+            e.target.tagName === 'DIALOG' && dispatch({ aside: 'results' })}
+        >
+          <div>
+            <div className=${style.searchInput}>
+              <input
+                onInput=${e => dispatch(setSearchTerm(e.target.value))}
+                placeholder="Search the archive..."
+                value=${searchTerm}
+              />
+              <${SearchIcon} />
+            </div>
+            <ul className=${style.list}>
+              ${suites
+                .filter(x =>
+                  x[1].title.toLowerCase().match(searchTerm.toLowerCase())
+                )
+                .sort(([k, v], [k1, v1]) =>
+                  +new Date(v.updated) < +new Date(v1.updated) ? 0 : -1
+                )
+                .map(suite(dispatch))}
+            </ul>
+          </div>
+        </dialog>
+      `
 }
 
 const style = {
@@ -197,6 +209,28 @@ const style = {
       width: 2rem;
       height: 2rem;
       transform: translateY(-50%);
+    }
+  `,
+  showArchiveButton: css`
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0;
+    background: rgba(0, 0, 0, 0.2);
+    height: 6rem;
+    width: 6rem;
+    flex: none;
+    border: 0;
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+    > * + * {
+      margin-top: 0.38rem;
     }
   `,
 }
