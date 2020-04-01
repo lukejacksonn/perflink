@@ -1,8 +1,8 @@
-import * as preacts from 'https://cdn.pika.dev/preact@10.3.3'
-import * as hooks from 'https://cdn.pika.dev/preact@10.3.3/hooks'
-import css from 'https://cdn.pika.dev/csz@1.2.0'
-import htm from 'https://cdn.pika.dev/htm@3.0.3'
-import uid from 'https://cdn.pika.dev/uid'
+import * as preacts from 'https://cdn.pika.dev/pin/preact@v10.3.3-uhXRG2PBJBDIY1Ef8sXg/preact.js'
+import * as hooks from 'https://cdn.pika.dev/-/preact@v10.3.3-uhXRG2PBJBDIY1Ef8sXg/dist=es2019,mode=exports/hooks'
+import css from 'https://cdn.pika.dev/pin/csz@v1.2.0-900XZmsdBeMLogkkQcD4/csz.js'
+import htm from 'https://cdn.pika.dev/pin/htm@v3.0.3-33cAE1PKrpVh0FdAUIDa/htm.js'
+import uid from 'https://cdn.pika.dev/pin/uid@v1.0.0-pGHaO3w0IERLifBCfHfR/uid.js'
 
 const html = htm.bind(preacts.h)
 
