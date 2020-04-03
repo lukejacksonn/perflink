@@ -8,7 +8,7 @@ export default ({ state, dispatch }) =>
       <p>
         Quick and easy JavaScript benchmarks.
         <br />
-        Reliably compare code exectution times in browser.
+        Reliably compare code execution times in browser.
       </p>
       <button onClick=${() => dispatch({ dialog: false, started: true })}>
         Start Experimenting
