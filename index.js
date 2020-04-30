@@ -61,10 +61,10 @@ const app = () => {
           const runScript = await fetchWorkerScript(before, 'run')
           const duration = await Promise.all(
             tests.map(
-              test =>
-                new Promise(resolve => {
+              (test) =>
+                new Promise((resolve) => {
                   const worker = new Worker(checkScript, { type: 'module' })
-                  worker.onmessage = e => {
+                  worker.onmessage = (e) => {
                     resolve(e.data)
                     worker.terminate()
                   }
@@ -72,10 +72,10 @@ const app = () => {
                 })
             )
           )
-          const bench = test =>
-            new Promise(resolve => {
+          const bench = (test) =>
+            new Promise((resolve) => {
               const worker = new Worker(runScript, { type: 'module' })
-              worker.onmessage = e => {
+              worker.onmessage = (e) => {
                 resolve({ ...test, ops: e.data })
                 worker.terminate()
               }
@@ -85,7 +85,7 @@ const app = () => {
             dispatch(updateProgress)
             return Promise.all(tests.map(bench))
           }
-          pSeries(Array.from({ length: runs }, tasks)).then(results =>
+          pSeries(Array.from({ length: runs }, tasks)).then((results) =>
             dispatch({ tests: average(results.flat()), started: false })
           )
         })()
@@ -103,8 +103,8 @@ const app = () => {
   }, [id, title, before, tests])
 
   useEffect(() => {
-    const alt = e => (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey)
-    const hotKeys = e => {
+    const alt = (e) => (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey)
+    const hotKeys = (e) => {
       if (e.keyCode == 27) e.preventDefault() || dispatch({ aside: 'results' })
       if (alt(e) && e.keyCode == 13)
         e.preventDefault() || dispatch(startTesting)
@@ -126,9 +126,4 @@ const app = () => {
   `
 }
 
-render(
-  html`
-    <${app} />
-  `,
-  document.body
-)
+render(html` <${app} /> `, document.body)
