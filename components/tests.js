@@ -32,28 +32,28 @@ export const TestControls = ({ id, test, state, dispatch }) => {
       <input
         disabled=${started}
         className=${style.nameInput}
-        onInput=${e => dispatch(updateTestCaseName(id, e.target.value))}
+        onInput=${(e) => dispatch(updateTestCaseName(id, e.target.value))}
         value=${`${test.name}`}
       />
       <p>
         ${test.ops !== -2 &&
-          (test.ops === -1
-            ? 'Failed'
-            : test.ops === 0
-            ? `Testing ${progressPercent}%`
-            : `${Number(test.ops).toLocaleString('en')} ops/s`)}
+        (test.ops === -1
+          ? 'Failed'
+          : test.ops === 0
+          ? `Testing ${progressPercent}%`
+          : `${Number(test.ops).toLocaleString('en')} ops/s`)}
       </p>
       <button
         disabled=${started}
         className=${style.button}
-        onClick=${e => dispatch(copyTestCase(id))}
+        onClick=${(e) => dispatch(copyTestCase(id))}
       >
         <${CopyIcon} />
       </button>
       <button
         disabled=${started}
         className=${style.button}
-        onClick=${e => dispatch(removeTestCase(id))}
+        onClick=${(e) => dispatch(removeTestCase(id))}
       >
         <${CloseIcon} />
       </button>
@@ -62,7 +62,7 @@ export const TestControls = ({ id, test, state, dispatch }) => {
 }
 
 export default ({ state, dispatch }) => {
-  const { suites, before, tests, id, title, started } = state
+  const { suites, before, tests, id, title, started, dialog } = state
   return html`
     <article className="tests">
       <div className=${style.testToolbar}>
@@ -72,10 +72,11 @@ export default ({ state, dispatch }) => {
         </b>
         <button
           disabled=${started}
+          data-animate=${dialog}
           className=${style.start}
           onClick=${() => dispatch(startTesting)}
         >
-          <span>Run Test</span>
+          <span>Run Tests</span>
           <${RunIcon} />
         </button>
         <button
@@ -91,18 +92,14 @@ export default ({ state, dispatch }) => {
           }}
         >
           ${Object.fromEntries(suites)[id]
-            ? html`
-                <${ForkIcon} />
-              `
-            : html`
-                <${SaveIcon} />
-              `}
+            ? html` <${ForkIcon} /> `
+            : html` <${SaveIcon} /> `}
         </button>
       </div>
       <${Editor}
         value=${before}
         disabled=${started}
-        onValueChange=${before => dispatch({ before })}
+        onValueChange=${(before) => dispatch({ before })}
         highlight=${highlightCode}
         padding=${20}
         style=${style.editor}
@@ -134,7 +131,8 @@ export default ({ state, dispatch }) => {
                 key=${id}
                 value=${test.code}
                 disabled=${started}
-                onValueChange=${code => dispatch(updateTestCaseCode(id, code))}
+                onValueChange=${(code) =>
+                  dispatch(updateTestCaseCode(id, code))}
                 highlight=${highlightCode}
                 padding=${20}
                 style=${style.editor}
@@ -162,6 +160,7 @@ const style = {
     border: 2px solid lightblue;
     display: flex;
     align-items: center;
+    font-weight: bold;
     &:disabled {
       opacity: 0.38;
       cursor: wait;
@@ -170,24 +169,32 @@ const style = {
       margin-left: 0.62rem;
     }
     svg {
+      width: 1.1rem;
+      height: 1.1rem;
       fill: lightblue;
     }
   `,
   start: css`
     color: lightblue;
-    border: 3px solid lightblue;
+    border: 2px solid lightblue;
     border-radius: 1rem 0rem 0rem 1rem;
     height: 3rem;
     display: flex;
+    font-weight: bold;
     align-items: center;
     &:disabled {
       opacity: 0.38;
       cursor: wait;
     }
+    &[data-animate='true'] {
+      background: #303037;
+      z-index: 1;
+      animation: pulse 1s ease-in-out infinite;
+    }
     > * + * {
       margin-left: 0.62rem;
     }
-    :disabled svg {
+    &:disabled svg {
       animation: rotate 1s linear infinite;
     }
     svg {
@@ -199,6 +206,17 @@ const style = {
       }
       to {
         transform: rotate(360deg);
+      }
+    }
+    @keyframes pulse {
+      from {
+        transform: scale(1.038);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      to {
+        transform: scale(1.038);
       }
     }
   `,
