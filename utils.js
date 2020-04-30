@@ -105,7 +105,7 @@ export const extractValidSuites = (o) =>
     try {
       suite = JSON.parse(v)
     } catch (e) {}
-    return suite.id && suite.before && suite.tests ? [...a, [k, suite]] : a
+    return suite.before && suite.tests ? [...a, [k, suite]] : a
   }, [])
 
 export const fetchWorkerScript = (before, url) =>
