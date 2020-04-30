@@ -12,8 +12,19 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <meta property="og:title" content="Perflink" />
+    <meta
+      property="og:description"
+      content="JavaScript performance benchmarks that you can share via URL."
+    />
+    <meta
+      property="og:image"
+      content="https://user-images.githubusercontent.com/1457604/80722022-d21e2400-8af6-11ea-9884-555e39312b62.png"
+    />
+    <meta property="og:url" content="https://perf.link" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
-      ;(function() {
+      ;(function () {
         var redirect = sessionStorage.redirect
         delete sessionStorage.redirect
         if (redirect && redirect != location.href)
