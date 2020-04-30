@@ -13,7 +13,6 @@ import {
 import Tests from './components/tests.js'
 import Archive from './components/archive.js'
 import Results from './components/results.js'
-import Welcome from './components/welcome.js'
 
 const { render, useReducer, useEffect } = preact
 const defaults = {
@@ -123,6 +122,5 @@ const app = () => {
     </main>
   `
 }
-// <${Welcome} state=${state} dispatch=${dispatch} />
 
 render(html` <${app} /> `, document.body)
