@@ -9,7 +9,7 @@ import {
 
 import { RemoveIcon, SearchIcon, LinkIcon, ArchiveIcon } from './icons.js'
 
-const suite = dispatch => ([id, { title, before, tests, updated }]) =>
+const suite = (dispatch) => ([id, { title, before, tests, updated }]) =>
   html`
     <li className=${style.item}>
       <div
@@ -62,13 +62,13 @@ export default ({ state, dispatch }) => {
     : html`
         <dialog
           className=${style.container}
-          onClick=${e =>
+          onClick=${(e) =>
             e.target.tagName === 'DIALOG' && dispatch({ aside: 'results' })}
         >
           <div>
             <div className=${style.searchInput}>
               <input
-                onInput=${e => dispatch(setSearchTerm(e.target.value))}
+                onInput=${(e) => dispatch(setSearchTerm(e.target.value))}
                 placeholder="Search the archive..."
                 value=${searchTerm}
               />
@@ -76,7 +76,7 @@ export default ({ state, dispatch }) => {
             </div>
             <ul className=${style.list}>
               ${suites
-                .filter(x =>
+                .filter((x) =>
                   x[1].title.toLowerCase().match(searchTerm.toLowerCase())
                 )
                 .sort(([k, v], [k1, v1]) =>
@@ -92,6 +92,7 @@ export default ({ state, dispatch }) => {
 const style = {
   container: css`
     position: fixed;
+    z-index: 1;
     top: 0;
     left: 0;
     width: 100%;

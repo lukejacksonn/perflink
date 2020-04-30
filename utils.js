@@ -99,6 +99,15 @@ export const timeSince = (date) => {
   return Math.floor(seconds) < 5 ? 'just now' : Math.floor(seconds) + ' seconds'
 }
 
+export const extractValidSuites = (o) =>
+  Object.entries(o).reduce((a, [k, v]) => {
+    let suite = {}
+    try {
+      suite = JSON.parse(v)
+    } catch (e) {}
+    return suite.id && suite.before && suite.tests ? [...a, [k, suite]] : a
+  }, [])
+
 export const fetchWorkerScript = (before, url) =>
   fetch(`./${url}.js`)
     .then((res) => res.text())
@@ -113,7 +122,7 @@ export const startTesting = (state) => ({
 })
 
 export const latestLocalStorage = () => ({
-  suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
+  suites: extractValidSuites(localStorage),
 })
 
 export const updateProgress = (state) => ({

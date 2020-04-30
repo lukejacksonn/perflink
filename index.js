@@ -8,6 +8,7 @@ import {
   startTesting,
   latestLocalStorage,
   updateProgress,
+  extractValidSuites,
 } from './utils.js'
 
 import Tests from './components/tests.js'
@@ -19,7 +20,7 @@ const defaults = {
   started: false,
   dialog: true,
   aside: 'results',
-  suites: Object.entries(localStorage).map(([k, v]) => [k, JSON.parse(v)]),
+  suites: extractValidSuites(localStorage),
   runs: 100,
   duration: 1,
   progress: 0,
