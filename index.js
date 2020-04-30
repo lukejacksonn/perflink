@@ -29,17 +29,16 @@ const defaults = {
   title: 'Finding numbers in an array of 1000',
   before: `const data = [...Array(1000).keys()]`,
   tests: [
-    { name: 'Find item 100', code: 'data.find(x => x == 100)', ops: 0 },
-    { name: 'Find item 200', code: 'data.find(x => x == 200)', ops: 0 },
-    { name: 'Find item 400', code: 'data.find(x => x == 400)', ops: 0 },
-    { name: 'Find item 800', code: 'data.find(x => x == 800)', ops: 0 },
+    { name: 'Find item 100', code: 'data.find(x => x == 100)', ops: 203360 },
+    { name: 'Find item 200', code: 'data.find(x => x == 200)', ops: 99560 },
+    { name: 'Find item 400', code: 'data.find(x => x == 400)', ops: 55350 },
+    { name: 'Find item 800', code: 'data.find(x => x == 800)', ops: 27660 },
   ],
 }
 
 const init = location.hash
   ? {
       ...defaults,
-      dialog: false,
       ...JSON.parse(atob(decodeURIComponent(location.hash.slice(1)))),
     }
   : defaults
@@ -121,9 +120,9 @@ const app = () => {
       <${Tests} state=${state} dispatch=${dispatch} />
       <${Results} state=${state} dispatch=${dispatch} />
       <${Archive} state=${state} dispatch=${dispatch} />
-      <${Welcome} state=${state} dispatch=${dispatch} />
     </main>
   `
 }
+// <${Welcome} state=${state} dispatch=${dispatch} />
 
 render(html` <${app} /> `, document.body)

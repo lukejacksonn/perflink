@@ -108,6 +108,7 @@ export const fetchWorkerScript = (before, url) =>
 export const startTesting = (state) => ({
   tests: state.tests.map((test) => ({ ...test, ops: 0 })),
   started: true,
+  dialog: false,
   progress: 0,
 })
 
