@@ -1,6 +1,6 @@
 # Perflink
 
-> JavaScript performance benchmarks that you can share via URL
+> JavaScript performance benchmarks you can share via URL
 
 The motivation here was to create a single page app like [jsperf](https://jsperf.com) – which is commonly used to compare performance characteristics of different Javascript code snippets – but with improved usability and portibility of results. It is a frontend only static web app with no build step and is hosted on Github pages.
 
@@ -39,7 +39,7 @@ Benchmarking involves accurate timing. Historically this has been hard to do due
 So instead, tests are now ran for a fixed duration of time (>1ms) and then the amount of times that the test ran for is multiplied up to give an operation per second reading. Here is the worker code for that calculation:
 
 ```js
-onmessage = async e => {
+onmessage = async (e) => {
   const test = e.data[0]
   const duration = e.data[1]
   let result
