@@ -9,6 +9,7 @@ import {
   latestLocalStorage,
   updateProgress,
   extractValidSuites,
+  decodeState,
 } from './utils.js'
 
 import Tests from './components/tests.js'
@@ -39,7 +40,7 @@ const defaults = {
 const init = location.hash
   ? {
       ...defaults,
-      ...JSON.parse(atob(decodeURIComponent(location.hash.slice(1)))),
+      ...decodeState(location.hash.slice(1)),
     }
   : defaults
 

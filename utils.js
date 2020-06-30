@@ -175,3 +175,33 @@ export const copyHashURL = (state) => {
   var result = document.execCommand('copy')
   document.body.removeChild(input)
 }
+
+export const decodeState = (encodedState) => {
+  try {
+    // V2
+    return JSON.parse(atob(decodeURIComponent(encodedState)))
+  } catch (e) {
+    console.log(e)
+  }
+
+  try {
+    // V1
+    return {
+      title: '',
+      before: atob(location.hash.slice(1).split('/')[0]),
+      tests: JSON.parse(atob(location.hash.slice(1).split('/')[1])).map(
+        ({ code }, testIndex) => {
+          return {
+            name: `Test ${testIndex + 1}`,
+            code,
+            ops: 0,
+          }
+        }
+      ),
+    }
+  } catch (e) {
+    console.log(e)
+  }
+
+  return {}
+}
