@@ -167,7 +167,7 @@ export const getColorForPercent = (value) =>
 
 export const copyHashURL = (state) => {
   const x = JSON.stringify(state)
-  const link = `${location.origin}#${encodeURIComponent(btoa(x))}`
+  const link = `${location.origin}#${btoa(encodeURIComponent(x))}`
   var input = document.createElement('input')
   input.setAttribute('value', link)
   document.body.appendChild(input)
@@ -179,7 +179,7 @@ export const copyHashURL = (state) => {
 export const decodeState = (encodedState) => {
   try {
     // V2
-    return JSON.parse(atob(decodeURIComponent(encodedState)))
+    return JSON.parse(decodeURIComponent(atob(encodedState)))
   } catch (e) {
     console.log(e)
   }
